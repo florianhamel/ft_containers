@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/20 01:51:08 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/21 22:25:27 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/22 00:44:54 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ template <class T>
 				return ;
 			}
 
-			T	&operator=(const iterator it) {
+			reference	operator=(const iterator it) {
 				valPtr_ = it.valPtr_;
 				return *this;
 			}
@@ -56,11 +56,11 @@ template <class T>
 			}
 
 
-			T	&operator*(void) const {
+			reference	operator*(void) const {
 				return *valPtr_;
 			}
 
-			T	*operator->(void) const {
+			pointer	operator->(void) const {
 				return valPtr_;
 			}
 
@@ -70,7 +70,7 @@ template <class T>
 			}
 
 			iterator<T>	operator++(int) {
-				T	*retPtr = valPtr_;
+				pointer	retPtr = valPtr_;
 				valPtr_++;
 				return retPtr;
 			}

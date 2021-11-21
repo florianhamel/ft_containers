@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/21 22:27:32 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/22 00:41:56 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ int main(void) {
 
 	std::cout << vec1.capacity() << std::endl;
 	std::cout << vec2.capacity() << std::endl;
+
+	std::cout << vec1.max_size() << std::endl;
+	std::cout << vec2.max_size() << std::endl;
 
 	return 0;
 }

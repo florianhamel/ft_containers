@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/21 21:20:19 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/22 00:54:20 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,37 @@ class vector {
 		/***         CAPACITY         ***/
 		/********************************/
 
+		size_type	size(void) const {
+			return size_;
+		}
+		
+		size_type	max_size(void) const {
+			return alloc_.max_size();
+		}
+
+		void	resize(size_type n, value_type val = value_type()) {
+			return ;
+		}
+
+		size_type	capacity(void) const {
+			return capacity_;
+		}
+
+		bool	empty(void) const {
+			if (size_ == 0) {
+				return true;
+			}
+			return false;
+		}
+
+		void	reserve(size_type n) {
+			return ;
+		}
+
+		/********************************/
+		/***         MODIFIERS        ***/
+		/********************************/
+	
 		void	push_back(const value_type &val) {
 			if (capacity_ == 0) {
 				memPtr_ = alloc_.allocate(1, 0);
@@ -110,24 +141,16 @@ class vector {
 			return ;
 		}
 
-		size_type	capacity(void) const {
-			return capacity_;
-		}
-
-		size_type	size(void) const {
-			return size_;
-		}
-
-	/********************************/
-	/***  VECTOR PRIVATE MEMBERS  ***/
-	/********************************/
-
 	private:
+
+		/********************************/
+		/***  VECTOR PRIVATE MEMBERS  ***/
+		/********************************/
 		
-		Alloc			alloc_;
-		pointer			memPtr_;
-		size_t			capacity_;
-		size_t			size_;
+		Alloc		alloc_;
+		pointer		memPtr_;
+		size_type	capacity_;
+		size_type	size_;
 		
 };
 
