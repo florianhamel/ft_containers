@@ -34,6 +34,21 @@ int main(void) {
 	ft::vector<int>::iterator	it1 = vec1.begin();
 	std::vector<int>::iterator	it2 = vec2.begin();
 
+	*it1 = 42;
+	*it2 = 42;
+
+	std::cout << *it1++ << std::endl;
+	std::cout << *it2++ << std::endl;
+ 
+	std::cout << *it1 << std::endl;
+	std::cout << *it2 << std::endl;
+
+	std::cout << (*it1-- == *it2--) << std::endl;
+	std::cout << *it1 << std::endl;
+	std::cout << *it2 << std::endl;
+	
+	
+
 	std::cout << it1.operator->() << std::endl;
 	std::cout << it2.operator->() << std::endl;
 
@@ -41,6 +56,7 @@ int main(void) {
 	std::cout << std::endl;;
 	std::for_each(vec2.begin(), vec2.end(), printVal<int>);
 	std::cout << std::endl;;
+
 
 	std::cout << vec1.capacity() << std::endl;
 	std::cout << vec2.capacity() << std::endl;

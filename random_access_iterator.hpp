@@ -55,7 +55,6 @@ template <class T>
 				return (valPtr_ != it.valPtr_);
 			}
 
-
 			reference	operator*(void) const {
 				return *valPtr_;
 			}
@@ -74,14 +73,34 @@ template <class T>
 				valPtr_++;
 				return retPtr;
 			}
+			
+			iterator<T>	&operator--(void) {
+				valPtr_--;
+				return *this;
+			}
 
+			iterator<T>	operator--(int) {
+				pointer	retPtr = valPtr_;
+				valPtr_--;
+				return retPtr;
+			}
 
+			iterator<T>	operator+(const int n) {
+				pointer	retPtr = valPtr_ + n;
+				return retPtr;
+			}
 
+			friend operator+(iterator<T> it, const int n);
+		
 		private:
 
 			pointer	valPtr_;
 
 	};
+
+	iterator<T>	operator+(iterator<T> it, const int n) {
+		return (n + it.valPtr_);
+	}
 
 }
 

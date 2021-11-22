@@ -99,9 +99,9 @@ class vector {
 			return alloc_.max_size();
 		}
 
-		void	resize(size_type n, value_type val = value_type()) {
-			return ;
-		}
+		// void	resize(size_type n, value_type val = value_type()) {
+		// 	return ;
+		// }
 
 		size_type	capacity(void) const {
 			return capacity_;
@@ -114,9 +114,9 @@ class vector {
 			return false;
 		}
 
-		void	reserve(size_type n) {
-			return ;
-		}
+		// void	reserve(size_type n) {
+		// 	return ;
+		// }
 
 		/********************************/
 		/***         MODIFIERS        ***/
