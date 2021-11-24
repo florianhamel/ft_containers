@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/24 14:36:06 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/24 15:33:10 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/24 16:27:08 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,40 @@
 namespace ft {
 
 template <class T>
-class rai : public base_rai {
+class const_rai : public base_rai<T> {
 
     public:
+
+		typedef typename base_rai<T>::value_type			value_type;
+        typedef typename base_rai<T>::difference_type		difference_type;
+        typedef typename base_rai<T>::pointer				pointer;
+        typedef typename base_rai<T>::reference				reference;
+        typedef typename base_rai<T>::iterator_category		iterator_category;
     
-        reference	operator=(const rai<T> it) {
+		const_rai(void) :
+        valPtr_(0) {
+            return ;
+        }
+
+        const_rai(pointer valPtr) :
+        valPtr_(valPtr) {
+            return ;
+        }
+
+        ~const_rai(void) {
+            return ;
+        }
+
+        reference	operator=(const_rai<T> it) {
             valPtr_ = it.valPtr_;
             return *this;
         }
 
-        bool	operator==(const rai<T> it) const {
+        bool	operator==(const_rai<T> it) const {
             return (valPtr_ == it.valPtr_);
         }
 
-        bool	operator!=(const rai<T> it) const {
+        bool	operator!=(const_rai<T> it) const {
             return (valPtr_ != it.valPtr_);
         }
 
@@ -43,38 +63,38 @@ class rai : public base_rai {
             return valPtr_;
         }
 
-        rai<T>	&operator++(void) {
+        const_rai<T>	&operator++(void) {
             valPtr_++;
             return *this;
         }
 
-        rai<T>	operator++(int) {
+        const_rai<T>	operator++(int) {
             pointer	retPtr = valPtr_;
             valPtr_++;
             return retPtr;
         }
         
-        rai<T>	&operator--(void) {
+        const_rai<T>	&operator--(void) {
             valPtr_--;
             return *this;
         }
 
-        rai<T>	operator--(int) {
+        const_rai<T>	operator--(int) {
             pointer	retPtr = valPtr_;
             valPtr_--;
             return retPtr;
         }
 
-        rai<T>	operator+(const int n) {
+        const_rai<T>	operator+(const int n) {
             pointer	retPtr = valPtr_ + n;
             return retPtr;
         }
 
-        friend	rai<T>	operator+(const rai<T> &it, const int n);
+        friend	const_rai<T>	operator+(const_rai<T> &it, const int n);
 
     private:
 
-        base_rai<T>::pointer const  valPtr_;
+		pointer const	valPtr_;
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 14:16:16 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/24 15:38:00 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/24 16:28:13 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,27 @@
 namespace ft {
 
 template <class T>
-class rai : public base_rai {
+class rai : public base_rai<T> {
 
     public:
+
+		typedef typename base_rai<T>::value_type			value_type;
+        typedef typename base_rai<T>::difference_type		difference_type;
+        typedef typename base_rai<T>::pointer				pointer;
+        typedef typename base_rai<T>::reference				reference;
+        typedef typename base_rai<T>::iterator_category		iterator_category;
     
         rai(void) :
         valPtr_(0) {
             return ;
         }
 
-        iterator(T *valPtr) :
+        rai(pointer valPtr) :
         valPtr_(valPtr) {
             return ;
         }
 
-        ~iterator(void) {
+        ~rai(void) {
             return ;
         }
 
@@ -87,8 +93,8 @@ class rai : public base_rai {
         friend	rai<T>	operator+(const rai<T> &it, const int n);
 
     private:
-
-        base_rai<T>::pointer valPtr_;
+		
+		pointer	valPtr_;
 
 };
 
