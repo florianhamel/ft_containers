@@ -90,17 +90,20 @@ template <class T>
 				return retPtr;
 			}
 
-			friend operator+(iterator<T> it, const int n);
-		
+			friend	iterator<T>	operator+(const iterator<T> &it, const int n);
+
 		private:
 
 			pointer	valPtr_;
 
 	};
 
-	iterator<T>	operator+(iterator<T> it, const int n) {
+	template <class T>
+	iterator<T> operator+(const iterator<T> &it, const int n) {
 		return (n + it.valPtr_);
 	}
+
+
 
 }
 

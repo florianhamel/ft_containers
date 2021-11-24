@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 16:11:05 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/21 18:12:47 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/24 15:23:31 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <memory>
+
+#include "base_rai.hpp"
 
 template <class T>
 void	printVec(const T &val) {
@@ -30,9 +32,6 @@ struct Abc {
 };
 
 int main(void) {
-	std::vector<int>	test;
-
-	test.push_back(42);
-	std::cout << *(test.end() - 1) << std::endl;
+	ft::base_rai<int>	test;
 	return 0;
 }
