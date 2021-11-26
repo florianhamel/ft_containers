@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/24 16:28:30 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/26 00:34:31 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 
 # include <memory>
 
-# include "rai.hpp"
-# include "const_rai.hpp"
+# include "random_access_iterator.hpp"
 # include "iterator_traits.hpp"
 
 namespace ft {
@@ -36,8 +35,8 @@ class vector {
 		typedef typename Alloc::const_reference		const_reference;
 		typedef typename Alloc::pointer				pointer;
 		typedef typename Alloc::const_pointer		const_pointer;
-		typedef	typename rai<T>						iterator;
-		typedef typename const_rai<T>				const_iterator;
+		typedef	typename ft::iterator<T>			iterator;
+		typedef typename ft::const_iterator<T>		const_iterator;
 
 		typedef std::size_t							size_type;
 		
@@ -81,7 +80,6 @@ class vector {
 		}
 
 		iterator	end(void) {
-			
 			return iterator(&memPtr_[size_]);
 		}
 
@@ -115,9 +113,17 @@ class vector {
 			}
 			return false;
 		}
-
+		
 		// void	reserve(size_type n) {
 		// 	return ;
+		// }
+
+		/********************************/
+		/***      ELEMENT ACCESS      ***/
+		/********************************/
+
+		// reference	operator[] (size_type n) {
+			
 		// }
 
 		/********************************/
