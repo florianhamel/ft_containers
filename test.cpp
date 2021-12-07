@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 16:11:05 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/25 21:28:15 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/11/26 11:39:24 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,19 @@ struct Abc {
 	}
 };
 
+struct yo {
+	int	&getInt(void) const {
+		return *this->myInt_;
+	}
+
+	private:
+		int	*myInt_;
+};
+
 int main(void) {
-	std::vector<int>	vec;
-
-	vec.push_back(21);
-	vec.push_back(42);
-
-	std::vector<int>::const_iterator	it = vec.begin();
-
-	std::cout << *it << std::endl;
-	it++;
-	std::cout << *it << std::endl;
+	int* const	test = new int(42);
+	std::cout << test << ": " << *test << std::endl;
+	*test = 21;
+	std::cout << test << ": " << *test << std::endl;
 	return 0;
 }

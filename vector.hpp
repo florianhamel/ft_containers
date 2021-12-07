@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/11/26 00:34:31 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/07 20:15:17 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define VECTOR_HPP
 
 # include <memory>
+# include <stdexcept>
 
 # include "random_access_iterator.hpp"
 # include "iterator_traits.hpp"
@@ -91,28 +92,17 @@ class vector {
 		/***         CAPACITY         ***/
 		/********************************/
 
-		size_type	size(void) const {
-			return size_;
-		}
+		size_type	size(void) const { return size_; }
 		
-		size_type	max_size(void) const {
-			return alloc_.max_size();
-		}
+		size_type	max_size(void) const { return alloc_.max_size(); }
 
 		// void	resize(size_type n, value_type val = value_type()) {
-		// 	return ;
+			// return ;
 		// }
 
-		size_type	capacity(void) const {
-			return capacity_;
-		}
+		size_type	capacity(void) const { return capacity_; }
 
-		bool	empty(void) const {
-			if (size_ == 0) {
-				return true;
-			}
-			return false;
-		}
+		bool	empty(void) const { return ((size_ == 0) ? true : false ); }
 		
 		// void	reserve(size_type n) {
 		// 	return ;
@@ -122,9 +112,35 @@ class vector {
 		/***      ELEMENT ACCESS      ***/
 		/********************************/
 
-		// reference	operator[] (size_type n) {
-			
-		// }
+		reference			operator[](size_type n) { return *(memPtr_ + n); }
+		
+		const_reference		operator[](size_type n) const { return *(memPtr_ + n); }
+
+		/*------------------------------------------*/
+
+		reference			at(size_type n) {
+			if (n < 0 || size_ <= n) {
+				throw(std::out_of_range("vector"));
+			}
+			return *(memPtr_ + n);
+		}
+		
+		const_reference		at(size_type n) const {
+			if (n < 0 || size_ <= n) {
+				throw(std::out_of_range("vector"));
+			}
+			return *(memPtr_ + n);
+		}
+
+		/*------------------------------------------*/
+
+		reference			front(void) { return *memPtr_; }
+		const_reference		front(void) const { return *memPtr_; }
+
+		/*------------------------------------------*/
+
+		reference			back(void) { return *(memPtr_ + (size_ - 1)); }
+		const_reference		back(void) const { return *(memPtr_ + (size_ - 1)); }
 
 		/********************************/
 		/***         MODIFIERS        ***/
@@ -145,15 +161,101 @@ class vector {
 				capacity_ *= 2;
 			}
 			memPtr_[size_] = val;
-			size_++;
+			++size_;
 			return ;
 		}
 
-	private:
+		/* single element */
+		iterator	insert(iterator position, const value_type &val) {
+			iterator	ret = position;
+			if (capacity_ == 0) {
+				memPtr_ = alloc_.allocate(1);
+				++capacity_;
+				if (position.base() == 0) {
+					*memPtr_ = val;
+					ret = this->begin();
+				} else {
+					*position = val;
+				}
+			} else if (size_ + 1 > capacity_) {
+				std::cout << "REALLOCATION" << std::endl;
+				T	*newPtr = alloc_.allocate(2 * capacity_, memPtr_);
+				T	*tmpPtr = newPtr;
+				capacity_ *= 2;
+				for (iterator it = this->begin(); it != position; it++) {
+					*tmpPtr = *it; ++tmpPtr;
+					alloc_.destroy(it.base());
+				}
+				ret = iterator(tmpPtr);
+				*tmpPtr = val; ++tmpPtr;
+				for (iterator it = position; it != this->end(); it++) {
+					*tmpPtr = *it; ++tmpPtr;
+					alloc_.destroy(it.base());
+				}
+				alloc_.deallocate(memPtr_, capacity_);
+				memPtr_ = newPtr;
+			} else {
+				std::cout << "NO REALLOCATION" << std::endl;
+				for (iterator it = this->end() - 1; it != position - 1; it--) {
+					*(it + 1) = *it;
+				}
+				*position = val;
+			}
+			++size_;
+			return ret;
+		}
 
-		/********************************/
-		/***  VECTOR PRIVATE MEMBERS  ***/
-		/********************************/
+		/* fill */
+		void	insert(iterator position, size_type n, const value_type &val) {
+			if (capacity_ == 0) {
+				memPtr_ = alloc_.allocate(n);
+				capacity_ = n;
+				T	*tmpPtr = memPtr_;
+				if (position.base() == 0) {
+					for (size_type i = 0; i < n; i++) {
+						*tmpPtr = val; ++tmpPtr;
+					}
+				} else {
+					for (size_type i = 0; i < n; i++) {
+						*position = val; ++position;
+					}
+				}
+			} else if (size_ + n > capacity_) {
+				std::cout << "REALLOCATION" << std::endl;
+				size_type	sizeAlloc = ((size_ + n > 2 * capacity_) ? size_ + n : 2 * capacity_);
+				T	*newPtr = alloc_.allocate(sizeAlloc, memPtr_);
+				T	*tmpPtr = newPtr;
+				for (iterator it = this->begin(); it != position; it++) {
+					*tmpPtr = *it; ++tmpPtr;
+					alloc_.destroy(it.base());
+				}
+				for (size_type i = 0; i < n; i++) {
+					*tmpPtr = val; ++tmpPtr;
+				}
+				for (iterator it = position; it != this->end(); it++) {
+					*tmpPtr = *it; ++tmpPtr;
+					alloc_.destroy(it.base());
+				}
+				alloc_.deallocate(memPtr_, capacity_);
+				memPtr_ = newPtr;
+				capacity_ = sizeAlloc;
+			} else {
+				std::cout << "NO REALLOCATION" << std::endl;
+				for (iterator it = this->end() - 1; it != position - 1; it--) {
+					*(it + n) = *it;
+				}
+				for (size_type i = 0; i < n; i++) {
+					*position = val; ++position;
+				}
+			}
+			size_ += n;
+		}
+
+		/* range */
+		// template <class InputIterator>
+		// void	insert(iterator position, InputIterator first, InputIterator last) {}
+
+	private:
 		
 		Alloc		alloc_;
 		pointer		memPtr_;
