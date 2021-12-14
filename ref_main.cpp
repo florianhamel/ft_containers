@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ref_main.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/14 01:58:31 by fhamel           ###   ########.fr       */
+/*   Created: 2021/12/11 22:55:32 by fhamel            #+#    #+#             */
+/*   Updated: 2021/12/13 12:01:21 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ int main(void) {
 	{
 		std::cout << "/--- Single Element ---/" << std::endl;
 
-		ft::vector<int> vec;
+		std::vector<int> vec;
 
-		ft::vector<int>::iterator it0 = vec.insert(vec.begin(), 42);
+		std::vector<int>::iterator it0 = vec.insert(vec.begin(), 42);
 		std::cout << "ret it0 insert: " << *it0 << std::endl;
 		std::cout << "print vec: ";
 		std::for_each(vec.begin(), vec.end(), printVal<int>);
@@ -60,8 +60,8 @@ int main(void) {
 		std::cout << "size: " << vec.size() << std::endl;
 		std::cout << "capacity: " << vec.capacity() << std::endl;
 
-		ft::vector<int>::iterator it1 = vec.insert(vec.begin() + 1, 21);
-		ft::vector<int>::iterator it2 = vec.insert(vec.begin() + 1, 12);
+		std::vector<int>::iterator it1 = vec.insert(vec.begin() + 1, 21);
+		std::vector<int>::iterator it2 = vec.insert(vec.begin() + 1, 12);
 		std::cout << "ret it1 insert: " << *it1 << std::endl;
 		std::cout << "ret it2 insert: " << *it2 << std::endl;
 		std::cout << "print vec: " << std::endl;
@@ -70,7 +70,7 @@ int main(void) {
 		std::cout << "size: " << vec.size() << std::endl;
 		std::cout << "capacity: " << vec.capacity() << std::endl;
 	
-		ft::vector<int>::iterator it3 = vec.insert(vec.begin() + 2, 24);
+		std::vector<int>::iterator it3 = vec.insert(vec.begin() + 2, 24);
 		std::cout << "ret it3 insert: " << *it3 << std::endl;
 		std::cout << "print vec: " << std::endl;
  		std::for_each(vec.begin(), vec.end(), printVal<int>);
@@ -81,7 +81,7 @@ int main(void) {
 	{
 		std::cout << "/--- Fill ---/" << std::endl;
 		
-		ft::vector<int> vec;
+		std::vector<int> vec;
 
 		std::cout << "test1\n";
 		vec.insert(vec.begin(), 3, 42);
