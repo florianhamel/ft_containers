@@ -6,12 +6,13 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 16:11:05 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/14 01:57:43 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/19 19:57:31 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <cstddef>
 #include <memory>
@@ -20,7 +21,7 @@
 #include "vector.hpp"
 
 template <class T>
-void	printVec(const T &val) {
+void	printVal(const T &val) {
 	std::cout << val << " ";
 }
 
@@ -84,14 +85,55 @@ class InputIter : public ft::base_iterator<std::input_iterator_tag, T> {
 
 int main(void)
 {
-	ft::vector<int>	vec;
-	ft::vector<int>	vec_(10, 21);
-	
-	vec.insert(vec.begin(), vec_.begin() + 3, vec_.begin());
-	
-	std::for_each(vec.begin(), vec.end(), printVec<int>); std::cout << std::endl;
-	std::cout << "size: " << vec.size() << std::endl;
-	std::cout << "capacity: " << vec.capacity() << std::endl;
+	/* assign */
+	// {
+	// 	std::vector<int>	vec(5, 42);
+	// 	std::list<int>	lst(7, 21);
 
+	// 	vec.assign(lst.begin(), lst.end());
+	// 	std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+	// 	vec.assign(10, 25);
+	// 	std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+	// }
+	// std::cout << "/----------/" << std::endl;
+	// {
+	// 	ft::vector<int>	vec(5, 42);
+	// 	std::list<int>	lst(7, 21);
+
+	// 	vec.assign(lst.begin(), lst.end());
+	// 	std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+	// 	vec.assign(10, 25);
+	// 	std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+	// }
+
+	/* pop_back */
+	// {
+	// 	ft::vector<int>	vec(5, 42);
+	// 	for (int i = 0; i < 3; ++i) {
+	// 		vec.pop_back();
+	// 	}
+	// 	std::for_each(vec.begin(), vec.end(), printVal<int>);
+	// }
+
+	/* swap */
+	{
+		ft::vector<int>	vec1(7134, 42);
+		ft::vector<int>	vec2(42345, 21);
+
+		std::cout << vec1.begin().base() << std::endl;
+		std::cout << vec2.begin().base() << std::endl;
+		std::for_each(vec1.begin(), vec1.end(), printVal<int>); std::cout << std::endl;
+		std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
+		
+		vec1.swap(vec2);
+
+		std::cout << vec1.begin().base() << std::endl;
+		std::cout << vec2.begin().base() << std::endl;
+		std::for_each(vec1.begin(), vec1.end(), printVal<int>); std::cout << std::endl;
+		std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
+
+		
+	}
+	// while(1) {}
 	return 0;
 }

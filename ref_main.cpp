@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/11 22:55:32 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/13 12:01:21 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/19 19:58:39 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,86 @@ int main(void) {
 		std::cout << "size: " << vec.size() << std::endl;
 		std::cout << "capacity: " << vec.capacity() << std::endl;	
 	}
-	std::cout << "//----------//" << std::endl;
+	{
+		std::cout << "/--- Range ---/" << std::endl;
+		
+		std::vector<int> 	vec;
+
+		std::list<int>		lst(3, 42);
+		std::deque<int>		dq(5, 21);
+		std::vector<int>	vec_(2, 12);
+		std::list<int>		lst_(4, 24);
+
+		std::cout << "test1\n";
+		vec.insert(vec.begin(), lst.begin(), lst.end());
+		std::cout << "test2\n";
+		std::cout << "print vec: ";
+		std::for_each(vec.begin(), vec.end(), printVal<int>);
+		std::cout << std::endl;
+		std::cout << "size: " << vec.size() << std::endl;
+		std::cout << "capacity: " << vec.capacity() << std::endl;
+
+		vec.insert(vec.begin() + 1, dq.begin(), dq.end());
+		vec.insert(vec.begin() + 1, vec_.begin(), vec_.end());
+		std::cout << "print vec: " << std::endl;
+		std::for_each(vec.begin(), vec.end(), printVal<int>);
+		std::cout << std::endl;
+		std::cout << "size: " << vec.size() << std::endl;
+		std::cout << "capacity: " << vec.capacity() << std::endl;
+	
+		vec.insert(vec.begin() + 2, lst_.begin(), lst_.end());
+		std::cout << "print vec: " << std::endl;
+ 		std::for_each(vec.begin(), vec.end(), printVal<int>);
+		std::cout << std::endl;
+		std::cout << "size: " << vec.size() << std::endl;
+		std::cout << "capacity: " << vec.capacity() << std::endl;	
+	}
+	std::cout << "//----- ERASE -----//" << std::endl;
+	{
+		std::cout << "/--- Single Element ---/" << std::endl;
+		std::vector<int>	vec;
+
+		for (int i = 0; i < 10; ++i) {
+			vec.push_back(i * i);
+		}
+		std::for_each(vec.begin(), vec.end(), printVal<int>);
+		std::vector<int>::iterator	it = vec.erase(vec.begin() + 3);
+		std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+		std::cout << "ret value: " << *it << std::endl;
+		std::cout << "ret index: " << it - vec.begin() << std::endl;
+	}
+	{
+		std::cout << "/--- Range ---/" << std::endl;
+		std::vector<int>	vec;
+
+		for (int i = 0; i < 10; ++i) {
+			vec.push_back(i * i);
+		}
+		std::for_each(vec.begin(), vec.end(), printVal<int>);
+		std::vector<int>::iterator	it = vec.erase(vec.begin() + 2, vec.begin() + 5);
+		std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
+		std::cout << "ret value: " << *it << std::endl;
+		std::cout << "ret index: " << it - vec.begin() << std::endl;
+	}
+	std::cout << "//----- RESIZE -----//" << std::endl;
+	{
+	}
+	std::cout << "//----- SWAP -----//" << std::endl;
+	{
+		std::vector<int>	vec1(7134, 42);
+		std::vector<int>	vec2(42345, 21);
+
+		std::cout << vec1.begin().base() << std::endl;
+		std::cout << vec2.begin().base() << std::endl;
+		std::for_each(vec1.begin(), vec1.end(), printVal<int>); std::cout << std::endl;
+		std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
+		
+		vec1.swap(vec2);
+
+		std::cout << vec1.begin().base() << std::endl;
+		std::cout << vec2.begin().base() << std::endl;
+		std::for_each(vec1.begin(), vec1.end(), printVal<int>); std::cout << std::endl;
+		std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
+	}
 	return 0;
 }

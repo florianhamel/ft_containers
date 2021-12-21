@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 17:11:22 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/13 16:45:06 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/15 01:18:01 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ struct is_conv_to : public integral_constant<bool, std::is_convertible<typename 
 
 template <class T, class U>
 struct is_conv_to<T, U, false> : public false_type {};
-
 
 template <class Iter>
 struct is_input_iterator : public is_conv_to<Iter, std::input_iterator_tag> {};

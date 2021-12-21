@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/19 21:04:00 by fhamel            #+#    #+#              #
-#    Updated: 2021/12/12 12:28:04 by fhamel           ###   ########.fr        #
+#    Updated: 2021/12/14 23:36:58 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,7 @@ $(D_OBJS)%.o : %.cpp
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(FSANITIZE) $(FLAGS) $(OBJS) -o $(NAME)
 	$(CC) $(FLAGS) $(REFMAIN) -o $(NAME_)
 
 clean :

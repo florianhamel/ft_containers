@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/14 01:55:45 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/20 22:15:31 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@
 namespace ft {
 
 template <class T, class Alloc = std::allocator<T> >
-class vector
-{
+class vector {
 
 	public:
 
@@ -52,11 +51,13 @@ class vector
 		/***  VECTOR PUBLIC MEMBERS   ***/
 		/********************************/
 
+		/* default */
 		explicit vector(const allocator_type &alloc = allocator_type()) :
 		alloc_(alloc), begin_(0), end_(0), endCap_(0)
 			{ return ; }
 
-		explicit vector (size_type n, const value_type &val = value_type(),
+		/* fill */
+		explicit vector(size_type n, const value_type &val = value_type(),
         const allocator_type &alloc = allocator_type()) :
 		alloc_(alloc), begin_(0), end_(0), endCap_(0)
 		{
@@ -67,12 +68,36 @@ class vector
 			}
 		}
 
-		~vector()
+		/* range */
+		template <class InputIterator>
+		vector(InputIterator first, InputIterator last,
+		const allocator_type &alloc = allocator_type()) :
+		alloc_(alloc), begin_(0), end_(0), endCap_(0)
+			{ assign(first, last); }
+
+		/* copy */
+		vector(const vector &x)
+			{ *this = x; }
+
+		~vector(void)
 		{
 			for (pointer tmp = begin_; tmp != end_; ++tmp) {
 				alloc_.destroy(tmp);
 			}
 			alloc_.deallocate(begin_, capacity());
+		}
+
+		vector	&operator=(const vector &x)
+		{
+			alloc_ = x.get_allocator();
+			begin_ = end_ = alloc_.allocate(x.capacity(), begin_);
+			endCap_ = begin_ + x.capacity();
+			const_iterator	its = x.begin();
+			for (iterator itd = begin(); end_ != endCap_ && its != x.end(); ++itd, ++its) {
+				*itd = *its;
+				++end_;
+			}
+			return *this; 
 		}
 
 		/********************************/
@@ -101,33 +126,54 @@ class vector
 		size_type	max_size(void) const
 			{ return static_cast<size_type>(alloc_.max_size()); }
  
-		// void	resize(size_type n, value_type val = value_type()) {
-			// return ;
-		// }
+		void	resize(size_type n, value_type val = value_type()) {
+			if (n > max_size()) {
+				throw std::length_error("vector");
+			}
+			else if (n <= size()) {
+				erase(begin() + n, end());
+			}
+			else {
+				insert(end(), n - size(), val);
+			}
+		}
 
 		size_type	capacity(void) const
 			{ return static_cast<size_type>(endCap_ - begin_); }
 
 		bool	empty(void) const
-			{ return (size() != 0); }
+			{ return (size() == 0); }
 		
-		// void	reserve(size_type n) {
-		// 	return ;
-		// }
+		void	reserve(size_type n)
+		{
+			if (n > max_size()) {
+				throw std::length_error("vector");
+			}
+			else if (n > capacity()) {
+				iterator	oldBegin = begin();
+				iterator	oldEnd = end();
+				begin_ = end_ = realloc_(n);
+				endCap_ = begin_ + n;
+				for (iterator tmp = begin(); end_ != endCap_ && oldBegin != oldEnd; ++tmp, ++oldBegin) {
+					*tmp = *oldBegin;
+					++end_;
+				}
+			}
+		}
 
 		/********************************/
 		/***      ELEMENT ACCESS      ***/
 		/********************************/
 
-		reference			operator[](size_type n)
+		reference		operator[](size_type n)
 			{ return *(begin_ + n); }
 
-		const_reference		operator[](size_type n) const
+		const_reference	operator[](size_type n) const
 			{ return *(begin_ + n); }
 
 		/*------------------------------------------*/
 
-		reference			at(size_type n)
+		reference		at(size_type n)
 		{
 			if (n < 0 || size() <= n) {
 				throw(std::out_of_range("vector"));
@@ -135,33 +181,78 @@ class vector
 			return *(begin_ + n);
 		}
 
-		const_reference		at(size_type n) const
+		const_reference	at(size_type n) const
 		{
-			if (n < 0 || size() <= n)
-				{ throw(std::out_of_range("vector")); }
+			if (n < 0 || size() <= n) {
+				throw(std::out_of_range("vector"));
+			}
 			return *(begin_ + n);
 		}
 
 		/*------------------------------------------*/
 
-		reference			front(void)
+		reference		front(void)
 			{ return *begin_; }
 		
-		const_reference		front(void) const
+		const_reference	front(void) const
 			{ return *begin_; }
 
 		/*------------------------------------------*/
 
-		reference			back(void)
+		reference		back(void)
 			{ return *(end_ - 1); }
 		
-		const_reference		back(void) const
+		const_reference	back(void) const
 			{ return *(end_ - 1); }
 
 		/********************************/
 		/***         MODIFIERS        ***/
 		/********************************/
 
+		/* range */
+		template <class InputIterator>
+		typename enable_if<
+			is_input_iterator<InputIterator>::value &&
+			!is_forward_iterator<InputIterator>::value
+		>::type	assign(InputIterator first, InputIterator last)
+		{
+			for (iterator tmp = begin(); tmp != end_; ++tmp) {
+				alloc_.destroy(begin_);
+			}
+			alloc_.deallocate(begin_, capacity());
+			begin_ = end_ = endCap_ = 0;
+			for (; first != last; ++first) {
+				push_back(*first);
+				++end_;
+			}
+		}
+
+		template <class InputIterator>
+		typename enable_if<
+			is_forward_iterator<InputIterator>::value
+		>::type	assign(InputIterator first, InputIterator last)
+		{
+			for (iterator tmp = begin(); tmp != end_; ++tmp) {
+				alloc_.destroy(begin_);
+			}
+			alloc_.deallocate(begin_, capacity());
+			begin_ = end_ = endCap_ = 0;
+			insertAlloc_(begin(), first, last);
+		}
+
+		/* fill */
+		void	assign(size_type n, const value_type &val)
+		{
+			for (iterator tmp = begin(); tmp != end_; ++tmp) {
+				alloc_.destroy(begin_);
+			}
+			alloc_.deallocate(begin_, capacity());
+			begin_ = end_ = endCap_ = 0;
+			insertAlloc_(begin(), n, val);
+		}
+
+		/*------------------------------------------*/
+		
 		void	push_back(const value_type &val)
 		{
 			size_type oldSize = size();
@@ -179,6 +270,16 @@ class vector
 			}
 			end_ = begin_ + oldSize + 1;
 			back() = val;
+		}
+
+		/*------------------------------------------*/
+
+		void	pop_back(void)
+		{
+			if (!empty()) {
+				--end_;
+				alloc_.destroy(end_);
+			}
 		}
 
 		/*------------------------------------------*/
@@ -216,13 +317,9 @@ class vector
 			!is_forward_iterator<InputIterator>::value
 		>::type insert(iterator position, InputIterator first, InputIterator last)
 		{
-			position = static_cast<iterator>(position);
-			first = static_cast<InputIterator>(first);
-			last = static_cast<InputIterator>(last);
-			std::cout << "Hey, this is the input_iterator specialization!\n";
-			// parcourir from last to first et insert chaque elem à pos
-			// immonde et pas opti mais fonctionnel ?
-			// y'a pas vraiment d'autres moyens en fait non ?
+			for (; first != last; ++first, ++position) {
+				insert(position, *first);
+			}
 		}
 
 		template <class InputIterator>
@@ -230,10 +327,6 @@ class vector
 			is_forward_iterator<InputIterator>::value
 		>::type insert(iterator position, InputIterator first, InputIterator last)
 		{
-			position = static_cast<iterator>(position);
-			first = static_cast<InputIterator>(first);
-			last = static_cast<InputIterator>(last);
-			std::cout << "Hey, this is the forward_iterator specialization!\n";
 			difference_type lenRange = std::distance(first, last);
 			if (lenRange <= 0) {
 				return ;
@@ -245,23 +338,62 @@ class vector
 				insertRealloc_(position, first, last);
 			}
 			else {
-				
+				insert_(position, first, last);
 			}
 		}
 
-		// template <class ForwardIterator>
-		// typename enable_if<
-		// 	is_forward_iterator<ForwardIterator>::value
-		// >::type insert(iterator position, ForwardIterator first, ForwardIterator last)
-		// {
-		// 	position = static_cast<iterator>(position);
-		// 	first = static_cast<InputIterator>(first);
-		// 	last = static_cast<InputIterator>(last);
-		// 	std::cout << "Hey, this is the forward_iterator specialization!\n";
-		// }
+		/*------------------------------------------*/
+
+		/* single element */
+		iterator	erase(iterator position)
+		{
+			alloc_.destroy(position.base());
+			for (iterator tmp = position; tmp != end() - 1; ++tmp) {
+				*tmp = *(tmp + 1);
+			}
+			--end_;
+			return position;
+		}
+
+		/* range */
+		iterator	erase(iterator first, iterator last)
+		{
+			difference_type	lenRange = last - first;
+			for (iterator tmp = first; tmp != last; ++tmp) {
+				alloc_.destroy(tmp.base());
+			}
+			for (iterator tmp = first; tmp != end() - lenRange; ++tmp) {
+				*tmp = *(tmp + lenRange);
+			}
+			end_ -= lenRange;
+			return first;
+		}
 
 		/*------------------------------------------*/
-		
+
+		void	swap(vector	&x)
+		{
+			pointer	tmpBegin = begin_, tmpEnd = end_, tmpEndCap = endCap_;
+			begin_ = x.begin_; end_ = x.end_; endCap_ = x.endCap_;
+			x.begin_ = tmpBegin; x.end_ = tmpEnd; x.endCap_ = tmpEndCap;
+		}
+
+		/*------------------------------------------*/
+
+		void	clear(void)
+		{
+			for (; end_ != begin_; --end_) {
+				alloc_.destroy(end_ - 1);
+			}
+		}
+
+		/********************************/
+		/***         ALLOCATOR        ***/
+		/********************************/
+
+		allocator_type	get_allocator(void) const
+			{ return alloc_; }
+
 		private:
 
 		/********************************/
@@ -281,10 +413,13 @@ class vector
 		iterator	insertAlloc_(iterator position, size_type n, const value_type &val)
 		{
 			if (position == begin_) {
-				begin_ = alloc_.allocate(n, 0);
-				endCap_ = end_ = begin_ + n;
-				for (iterator tmp = begin(); tmp != end(); ++tmp) {
+				begin_ = realloc_(n);
+				endCap_ = begin_ + n;
+				end_ = begin_;
+				iterator tmp = begin_;
+				for (size_type i = 0; end_ != endCap_ && i < n; ++tmp, ++i) {
 					*tmp = val;
+					++end_;
 				}
 			} else {
 				for (size_type i = 0; i < n; ++i, ++position) {
@@ -301,7 +436,7 @@ class vector
 		{
 			difference_type	lenRange = std::distance(first, last);
 			if (position == begin_) {
-				begin_ = alloc_.allocate(lenRange, 0);
+				begin_ = realloc_(lenRange);
 				endCap_ = begin_ + lenRange;
 				end_ = begin_;
 				for (iterator tmp = begin(); end_ != endCap_ && first != last; ++tmp, ++first) {
@@ -318,34 +453,28 @@ class vector
 		
 		iterator	insertRealloc_(iterator position, size_type n, const value_type &val)
 		{
-			size_type		oldSize = size();
+			iterator		oldBegin = begin();
+			iterator		oldEnd = end();
 			size_type		oldCap = capacity();
-			difference_type	offPos = position - begin_;
-			size_type		sizeAlloc = (oldSize + n > oldCap * 2) ? oldSize + n : oldCap * 2;
-			pointer			newBegin = alloc_.allocate(sizeAlloc, begin_);
-			iterator		newPos(newBegin + offPos);
-			iterator		its(begin_);
-			iterator		itd(newBegin);
-			for (; its != endCap_ && its != position; ++its, ++itd) {
+			begin_ = end_ = realloc_(n);
+			iterator	itd = begin();
+			iterator	its = oldBegin;
+			for (; end_ != endCap_ && its != position; ++itd, ++its) {
 				*itd = *its;
 				alloc_.destroy(its.base());
+				++end_;
 			}
-			while (itd < newPos) {
-				++itd;
-			}
-			for (size_type i = 0; i < n; ++i, ++itd) {
+			for (size_type i = 0; end_ != endCap_ && i < n; ++itd, ++i) {
 				*itd = val;
+				++end_;
 			}
-			for (; its != end(); ++its, ++itd) {
+			for (; end_ != endCap_ && its != oldEnd; ++itd, ++its) {
 				*itd = *its;
 				alloc_.destroy(its.base());
+				++end_;
 			}
-			alloc_.deallocate(begin_, oldCap);
-			begin_ = newBegin;
-			end_ = (offPos >= 0 && offPos >= static_cast<long>(oldSize + n)) ?
-				begin_ + offPos + n : begin_ + oldSize + n;
-			endCap_ = begin_ + sizeAlloc;
-			return newPos;
+			alloc_.deallocate(oldBegin.base(), oldCap);
+			return position;
 		}
 
 		template <class InputIterator>
@@ -382,12 +511,27 @@ class vector
 			for (iterator it = end() - 1; it != position - 1; --it) {
 				*(it + n) = *it;
 			}
-			iterator tmp = position;
-			for (size_type i = 0; i < n; ++i, ++tmp) {
+			iterator	tmp = position;
+			for (size_type i = 0; end_ != endCap_ && i < n; ++i, ++tmp) {
 				*tmp = val;
+				++end_;
 			}
-			end_ += n;
 			return position;
+		}
+
+		template <class InputIterator>
+		typename enable_if<
+			is_forward_iterator<InputIterator>::value
+		>::type	insert_(iterator position, InputIterator first, InputIterator last)
+		{
+			difference_type	lenRange = std::distance(first, last);
+			for (iterator it = end() - 1; it != position - 1; --it) {
+				*(it + lenRange) = *it;
+			}
+			for (; end_ != endCap_ && first != last; ++position, ++first) {
+				*position = *first;
+				++end_;
+			}
 		}
 };
 
