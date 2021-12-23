@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/20 22:15:31 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/23 16:53:14 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 
 # include <memory>
 # include <stdexcept>
-# include <iterator> // std::distance()
 
-# include "type_traits.hpp"
 # include "random_access_iterator.hpp"
+# include "reverse_iterator.hpp"
 
 namespace ft {
 
@@ -28,7 +27,6 @@ class vector {
 	public:
 
 		typedef	T									value_type;
-		typedef std::size_t							size_type;
 		typedef Alloc								allocator_type;
 		typedef typename Alloc::reference			reference;
 		typedef typename Alloc::const_reference		const_reference;
@@ -36,7 +34,10 @@ class vector {
 		typedef typename Alloc::const_pointer		const_pointer;
 		typedef	iterator<T>							iterator;
 		typedef const_iterator<T>					const_iterator;
+		typedef reverse_iterator<const_iterator>	const_reverse_iterator;
+		typedef reverse_iterator<iterator>			reverse_iterator;
 		typedef typename iterator::difference_type	difference_type;
+		typedef std::size_t							size_type;
 
 	private:
 
@@ -60,13 +61,7 @@ class vector {
 		explicit vector(size_type n, const value_type &val = value_type(),
         const allocator_type &alloc = allocator_type()) :
 		alloc_(alloc), begin_(0), end_(0), endCap_(0)
-		{
-			begin_ = alloc_.allocate(n, 0);
-			endCap_ = end_ = begin_ + n;
-			for (pointer tmp = begin_; tmp != end_; ++tmp) {
-				*tmp = val;
-			}
-		}
+			{ assign(n, val); }
 
 		/* range */
 		template <class InputIterator>
@@ -104,17 +99,29 @@ class vector {
 		/***        ITERATORS         ***/
 		/********************************/
 
-		iterator	begin(void)
-			{ return iterator(begin_); }
+		iterator			begin(void)
+			{ return begin_; }
 
-		const_iterator	begin(void) const
-			{ return const_iterator(begin_); }
+		const_iterator		begin(void) const
+			{ return begin_; }
 
-		iterator	end(void)
+		iterator			end(void)
 			{ return iterator(end_); }
 
-		const_iterator	end(void) const
+		const_iterator		end(void) const
 			{ return const_iterator(end_); }
+
+		reverse_iterator	rbegin(void)
+			{ return reverse_iterator(end()); }
+
+		const_reverse_iterator	rbegin(void) const
+			{ return const_reverse_iterator(end()); }
+
+		reverse_iterator	rend(void)
+			{ return reverse_iterator(begin()); }
+
+		const_reverse_iterator	rend(void) const
+			{ return const_reverse_iterator(begin()); }
 
 		/********************************/
 		/***         CAPACITY         ***/
@@ -232,8 +239,8 @@ class vector {
 			is_forward_iterator<InputIterator>::value
 		>::type	assign(InputIterator first, InputIterator last)
 		{
-			for (iterator tmp = begin(); tmp != end_; ++tmp) {
-				alloc_.destroy(begin_);
+			for (iterator tmp = begin(); tmp != end(); ++tmp) {
+				alloc_.destroy(tmp.base());
 			}
 			alloc_.deallocate(begin_, capacity());
 			begin_ = end_ = endCap_ = 0;
@@ -243,8 +250,8 @@ class vector {
 		/* fill */
 		void	assign(size_type n, const value_type &val)
 		{
-			for (iterator tmp = begin(); tmp != end_; ++tmp) {
-				alloc_.destroy(begin_);
+			for (iterator tmp = begin(); tmp != end(); ++tmp) {
+				alloc_.destroy(tmp.base());
 			}
 			alloc_.deallocate(begin_, capacity());
 			begin_ = end_ = endCap_ = 0;
@@ -412,11 +419,11 @@ class vector {
 
 		iterator	insertAlloc_(iterator position, size_type n, const value_type &val)
 		{
-			if (position == begin_) {
+			if (position == begin()) {
 				begin_ = realloc_(n);
 				endCap_ = begin_ + n;
 				end_ = begin_;
-				iterator tmp = begin_;
+				iterator tmp = begin();
 				for (size_type i = 0; end_ != endCap_ && i < n; ++tmp, ++i) {
 					*tmp = val;
 					++end_;
@@ -435,7 +442,7 @@ class vector {
 		>::type	insertAlloc_(iterator position, InputIter first, InputIter last)
 		{
 			difference_type	lenRange = std::distance(first, last);
-			if (position == begin_) {
+			if (position.base() == begin_) {
 				begin_ = realloc_(lenRange);
 				endCap_ = begin_ + lenRange;
 				end_ = begin_;

@@ -6,16 +6,14 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 17:11:22 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/15 01:18:01 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/22 16:37:34 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPE_TRAITS_HPP
 # define TYPE_TRAITS_HPP
 
-# define ONE_BYTE 1
-
-#include <iterator>
+#include <iterator> // std::distance
 
 namespace ft {
 

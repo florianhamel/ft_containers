@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/20 18:34:30 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/22 18:35:30 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,138 @@ class my_input_iter : public ft::base_iterator<std::input_iterator_tag, T> {};
 
 template <class T>
 class my_forward_iter: public ft::base_iterator<std::forward_iterator_tag, T> {};
+
+/********************************/
+/***         ITERATORS        ***/
+/********************************/
+
+void	ft_iterator()
+{
+	ft::vector<int>	vec;
+
+	for (int i = 0; i < 10; ++i) {
+		vec.push_back(i);
+	}
+	ft::vector<int>::iterator	it = vec.begin();
+	ft::vector<int>::iterator	ite = vec.end();
+	std::cout << (it == ite) << std::endl;
+	std::cout << (it != ite) << std::endl;
+	std::cout << *it << std::endl;
+	std::cout << it.operator->() << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *(--it) << std::endl;
+	std::cout << *(ite - 5) << std::endl;
+	std::cout << *(it + 2) << std::endl;
+	std::cout << *(2 + it) << std::endl;
+	std::cout << ite - it << std::endl;
+	std::cout << (it < ite) << std::endl;
+	std::cout << (it > ite) << std::endl;
+	std::cout << (it <= ite) << std::endl;
+	std::cout << (it >= ite) << std::endl;
+	std::cout << *(it += 3) << std::endl;
+	std::cout << *(it -= 3) << std::endl;
+	it[3] = 42;
+	std::cout << it[3] << std::endl;
+	std::for_each(it, ite, printVal<int>);
+}
+
+void	ft_const_iterator()
+{
+	ft::vector<int>	vec;
+
+	for (int i = 0; i < 10; ++i) {
+		vec.push_back(i);
+	}
+	ft::vector<int>::const_iterator	it = vec.begin();
+	ft::vector<int>::const_iterator	ite = vec.end();
+	std::cout << (it == ite) << std::endl;
+	std::cout << (it != ite) << std::endl;
+	std::cout << *it << std::endl;
+	std::cout << it.operator->() << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *(--it) << std::endl;
+	std::cout << *(ite - 5) << std::endl;
+	std::cout << *(it + 2) << std::endl;
+	std::cout << *(2 + it) << std::endl;
+	std::cout << ite - it << std::endl;
+	std::cout << (it < ite) << std::endl;
+	std::cout << (it > ite) << std::endl;
+	std::cout << (it <= ite) << std::endl;
+	std::cout << (it >= ite) << std::endl;
+	std::cout << *(it += 3) << std::endl;
+	std::cout << *(it -= 3) << std::endl;
+	// it[3] = 42;
+	std::cout << it[3] << std::endl;
+	std::for_each(it, ite, printVal<int>);
+}
+
+void	ft_reverse_iterator()
+{
+	ft::vector<int>	vec;
+
+	for (int i = 0; i < 10; ++i) {
+		vec.push_back(i);
+	}
+	ft::vector<int>::reverse_iterator	it = vec.rbegin();
+	ft::vector<int>::reverse_iterator	ite = vec.rend();
+	std::cout << (it == ite) << std::endl;
+	std::cout << (it != ite) << std::endl;
+	std::cout << *it << std::endl;
+	std::cout << it.operator->() << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *(--it) << std::endl;
+	std::cout << *(ite - 5) << std::endl;
+	std::cout << *(it + 2) << std::endl;
+	std::cout << *(2 + it) << std::endl;
+	std::cout << ite - it << std::endl;
+	std::cout << (it < ite) << std::endl;
+	std::cout << (it > ite) << std::endl;
+	std::cout << (it <= ite) << std::endl;
+	std::cout << (it >= ite) << std::endl;
+	std::cout << *(it += 3) << std::endl;
+	std::cout << *(it -= 3) << std::endl;
+	it[3] = 42;
+	std::cout << it[3] << std::endl;
+	std::for_each(it, ite, printVal<int>);
+}
+
+void	ft_const_reverse_iterator()
+{
+	ft::vector<int>	vec;
+
+	for (int i = 0; i < 10; ++i) {
+		vec.push_back(i);
+	}
+	ft::vector<int>::const_reverse_iterator	it = vec.rbegin();
+	ft::vector<int>::const_reverse_iterator	ite = vec.rend();
+	std::cout << (it == ite) << std::endl;
+	std::cout << (it != ite) << std::endl;
+	std::cout << *it << std::endl;
+	std::cout << it.operator->() << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *(--it) << std::endl;
+	std::cout << *(ite - 5) << std::endl;
+	std::cout << *(it + 2) << std::endl;
+	std::cout << *(2 + it) << std::endl;
+	std::cout << ite - it << std::endl;
+	std::cout << (it < ite) << std::endl;
+	std::cout << (it > ite) << std::endl;
+	std::cout << (it <= ite) << std::endl;
+	std::cout << (it >= ite) << std::endl;
+	std::cout << *(it += 3) << std::endl;
+	std::cout << *(it -= 3) << std::endl;
+	// it[3] = 42;
+	std::cout << it[3] << std::endl;
+	std::for_each(it, ite, printVal<int>);
+}
 
 /********************************/
 /***         CAPACITY         ***/
@@ -357,6 +489,15 @@ void	ft_swap()
 }
 
 int main(void) {
+
+	/********************************/
+	/***        ITERATORS         ***/
+	/********************************/
+
+	ft_iterator();
+	ft_const_iterator();
+	ft_reverse_iterator();
+	ft_const_reverse_iterator();
 
 	/********************************/
 	/***         CAPACITY         ***/
