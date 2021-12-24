@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/24 01:38:07 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/24 12:20:33 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ class reverse_iterator {
 			{ baseIter_ += n; return *this; }
 
 		reference			operator[](difference_type n) const
-			{ return *(base().base() - n); }
+			{ iterator_type tmp = baseIter_; return *(--tmp - n); }
 
 };
 

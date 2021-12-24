@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/23 23:33:01 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/24 13:29:43 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ class vector {
 		void	reserve(size_type n)
 		{
 			if (n > max_size()) {
-				throw std::length_error("vector");
+				throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
 			}
 			else if (n > capacity()) {
 				iterator	oldBegin = begin();
@@ -459,6 +459,7 @@ class vector {
 		
 		iterator	insertRealloc_(iterator position, size_type n, const value_type &val)
 		{
+			difference_type	offPos = position - begin();
 			iterator		oldBegin = begin();
 			iterator		oldEnd = end();
 			size_type		oldCap = capacity();
@@ -480,7 +481,7 @@ class vector {
 				++end_;
 			}
 			alloc_.deallocate(oldBegin.base(), oldCap);
-			return position;
+			return begin() + offPos;
 		}
 
 		template <class InputIterator>
