@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/23 16:53:14 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/23 23:33:01 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 # include <memory>
 # include <stdexcept>
 
-# include "random_access_iterator.hpp"
-# include "reverse_iterator.hpp"
+# include "iterator.hpp"
 
 namespace ft {
 
@@ -32,12 +31,12 @@ class vector {
 		typedef typename Alloc::const_reference		const_reference;
 		typedef typename Alloc::pointer				pointer;
 		typedef typename Alloc::const_pointer		const_pointer;
-		typedef	iterator<T>							iterator;
-		typedef const_iterator<T>					const_iterator;
+		typedef std::size_t							size_type;
+		typedef ra_iterator<T, const T*, const T&>	const_iterator;								
+		typedef ra_iterator<T>						iterator;
 		typedef reverse_iterator<const_iterator>	const_reverse_iterator;
 		typedef reverse_iterator<iterator>			reverse_iterator;
 		typedef typename iterator::difference_type	difference_type;
-		typedef std::size_t							size_type;
 
 	private:
 
@@ -100,10 +99,10 @@ class vector {
 		/********************************/
 
 		iterator			begin(void)
-			{ return begin_; }
+			{ return iterator(begin_); }
 
 		const_iterator		begin(void) const
-			{ return begin_; }
+			{ return const_iterator(begin_); }
 
 		iterator			end(void)
 			{ return iterator(end_); }

@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 17:11:22 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/22 16:37:34 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/23 22:31:48 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,6 @@
 #include <iterator> // std::distance
 
 namespace ft {
-
-/********************************/
-/***       BASE_ITERATOR      ***/
-/********************************/
-
-template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
-struct base_iterator {
-	typedef T			value_type;
-	typedef Distance	difference_type;
-	typedef Pointer		pointer;
-	typedef Reference	reference;
-	typedef Category	iterator_category;
-};
 
 /********************************/
 /***      ITERATOR_TRAITS     ***/
@@ -131,6 +118,9 @@ struct is_input_iterator : public is_conv_to<Iter, std::input_iterator_tag> {};
 
 template <class Iter>
 struct is_forward_iterator : public is_conv_to<Iter, std::forward_iterator_tag> {};
+
+template <class Iter>
+struct is_random_access_iterator : public is_conv_to<Iter, std::random_access_iterator_tag> {};
 
 }
 
