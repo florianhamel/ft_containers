@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/24 13:29:43 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/24 16:43:09 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -541,6 +541,10 @@ class vector {
 			}
 		}
 };
+
+template <class T, class Alloc>
+bool	operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{ return true; }
 
 }
 
