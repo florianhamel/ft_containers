@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/24 14:02:12 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 00:49:13 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,46 @@ void	ft_reserve()
 	vec.reserve(20);
 	std::cout << "capacity: " << vec.size() << std::endl;
 	std::cout << (ptr == vec.begin().base()) << std::endl;
+}
+
+/********************************/
+/***   RELATIONAL OPERATORS   ***/
+/********************************/
+
+void	ft_relational_operators()
+{
+	std::cout << "\n----- ft_relational_operators() -----\n" << std::endl;
+	{
+		std::vector<int>	vec1(10, 42);
+		std::vector<int>	vec2(10, 42);
+		vec2[7] = 41;
+		std::cout << (vec1 == vec2) << std::endl;
+		std::cout << (vec1 != vec2) << std::endl;
+		std::cout << (vec1 < vec2) << std::endl;
+		std::cout << (vec1 <= vec2) << std::endl;
+		std::cout << (vec1 > vec2) << std::endl;
+		std::cout << (vec1 >= vec2) << std::endl;
+	}
+	{
+		std::vector<int>	vec1(10, 42);
+		std::vector<int>	vec2(11, 42);
+		std::cout << (vec1 == vec2) << std::endl;
+		std::cout << (vec1 != vec2) << std::endl;
+		std::cout << (vec1 < vec2) << std::endl;
+		std::cout << (vec1 <= vec2) << std::endl;
+		std::cout << (vec1 > vec2) << std::endl;
+		std::cout << (vec1 >= vec2) << std::endl;
+	}
+	{
+		std::vector<int>	vec1(10, 42);
+		std::vector<int>	vec2(10, 42);
+		std::cout << (vec1 == vec2) << std::endl;
+		std::cout << (vec1 != vec2) << std::endl;
+		std::cout << (vec1 < vec2) << std::endl;
+		std::cout << (vec1 <= vec2) << std::endl;
+		std::cout << (vec1 > vec2) << std::endl;
+		std::cout << (vec1 >= vec2) << std::endl;
+	}
 }
 
 /********************************/
@@ -547,6 +587,12 @@ int main(void) {
 
 	/* ft_reserve */
 	ft_reserve();
+	
+	/********************************/
+	/***   RELATIONAL OPERATORS   ***/
+	/********************************/
+
+	ft_relational_operators();
 
 	/********************************/
 	/***      ELEMENT ACCESS      ***/

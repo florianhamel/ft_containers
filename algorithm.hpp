@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/24 17:11:36 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 00:05:35 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 00:54:04 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,15 @@ bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
 InputIterator2 first2, InputIterator2 last2)
 {
 	while (first1 != last1) {
-		if (first2 == last2 || *first1 < *first2) {
+		if (first2 == last2 || *first2 < *first1) {
 			return false;
+		}
+		else if (*first1 < *first2) {
+			return true;
 		}
 		++first1; ++first2;
 	}
-	return true;
+	return (first2 != last2);
 }
 
 /* custom */

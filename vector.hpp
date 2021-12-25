@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 00:03:03 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 00:48:26 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdexcept>
 
 # include "iterator.hpp"
+# include "algorithm.hpp"
 
 namespace ft {
 
@@ -531,9 +532,39 @@ class vector {
 		}
 };
 
-// template <class T, class Alloc>
-// bool	operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
-// 	{ return true; }
+template <class T, class Alloc>
+bool	operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	if ((lhs.size() != rhs.size()) || !equal(lhs.begin(), lhs.end(), rhs.begin())) {
+		return false;
+	}
+	return true;
+}
+
+template <class T, class Alloc>
+bool	operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{ return !(lhs == rhs); }
+
+template <class T, class Alloc>
+bool	operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	if (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) {
+		return true;
+	}
+	return false;
+}
+
+template <class T, class Alloc>
+bool	operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{ return !(lhs > rhs); }
+
+template <class T, class Alloc>
+bool	operator>(const vector<T, Alloc> &lsh, const vector<T, Alloc> &rhs)
+	{ return (rhs < lsh); }
+
+template <class T, class Alloc>
+bool	operator>=(const vector<T, Alloc> &lsh, const vector<T, Alloc> &rhs)
+	{ return !(lsh < rhs); }
 
 }
 
