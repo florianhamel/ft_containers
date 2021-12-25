@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/24 16:43:09 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 00:03:03 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,6 @@ class vector {
 		const_reference	operator[](size_type n) const
 			{ return *(begin_ + n); }
 
-		/*------------------------------------------*/
-
 		reference		at(size_type n)
 		{
 			if (n < 0 || size() <= n) {
@@ -195,15 +193,11 @@ class vector {
 			return *(begin_ + n);
 		}
 
-		/*------------------------------------------*/
-
 		reference		front(void)
 			{ return *begin_; }
 		
 		const_reference	front(void) const
 			{ return *begin_; }
-
-		/*------------------------------------------*/
 
 		reference		back(void)
 			{ return *(end_ - 1); }
@@ -215,6 +209,7 @@ class vector {
 		/***         MODIFIERS        ***/
 		/********************************/
 
+		/*--- assign() ---*/
 		/* range */
 		template <class InputIterator>
 		typename enable_if<
@@ -257,8 +252,7 @@ class vector {
 			insertAlloc_(begin(), n, val);
 		}
 
-		/*------------------------------------------*/
-		
+		/*--- push_back() ---*/
 		void	push_back(const value_type &val)
 		{
 			size_type oldSize = size();
@@ -278,8 +272,7 @@ class vector {
 			back() = val;
 		}
 
-		/*------------------------------------------*/
-
+		/*--- pop_back() ---*/
 		void	pop_back(void)
 		{
 			if (!empty()) {
@@ -288,8 +281,7 @@ class vector {
 			}
 		}
 
-		/*------------------------------------------*/
-
+		/*--- insert() ---*/
 		/* single element */
 		iterator	insert(iterator position, const value_type &val)
 		{
@@ -348,8 +340,7 @@ class vector {
 			}
 		}
 
-		/*------------------------------------------*/
-
+		/*--- erase() ---*/
 		/* single element */
 		iterator	erase(iterator position)
 		{
@@ -375,8 +366,7 @@ class vector {
 			return first;
 		}
 
-		/*------------------------------------------*/
-
+		/*--- swap() ---*/
 		void	swap(vector	&x)
 		{
 			pointer	tmpBegin = begin_, tmpEnd = end_, tmpEndCap = endCap_;
@@ -384,8 +374,7 @@ class vector {
 			x.begin_ = tmpBegin; x.end_ = tmpEnd; x.endCap_ = tmpEndCap;
 		}
 
-		/*------------------------------------------*/
-
+		/*--- clear() ---*/
 		void	clear(void)
 		{
 			for (; end_ != begin_; --end_) {
@@ -542,9 +531,9 @@ class vector {
 		}
 };
 
-template <class T, class Alloc>
-bool	operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
-	{ return true; }
+// template <class T, class Alloc>
+// bool	operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+// 	{ return true; }
 
 }
 
