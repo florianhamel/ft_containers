@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 01:06:44 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 01:09:53 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,67 +259,6 @@ class reverse_iterator {
 			{ iterator_type tmp = baseIter_; return *(--tmp - n); }
 
 };
-
-// template <class Iter>
-// typename enable_if <
-// 	is_random_access_iterator<Iter>::value,
-// reverse_iterator<Iter> >::type	operator+(reverse_iterator<Iter> it, const int n)
-// 	{ return reverse_iterator<Iter>(base() - n); }
-
-// template <class Iter>
-// typename enable_if <
-// 	is_random_access_iterator<Iter>::value,
-// reverse_iterator<Iter> >::type	operator-(reverse_iterator<Iter> rev_it, const int n)
-// 	{ return reverse_iterator<Iter>(base() + n); }
-
-// template <class Iter1, class Iter2>
-// typename enable_if <
-// 	is_random_access_iterator<Iter1>::value &&
-// 	is_random_access_iterator<Iter2>::value,
-// ptrdiff_t>::type	operator-(const reverse_iterator<Iter1> &rev_it1, const reverse_iterator<Iter2> &rev_it2)
-// 	{ return rev_it2.base() - rev_it1.base(); }
-
-// template <class Iter1, class Iter2>
-// typename enable_if <
-// 	is_random_access_iterator<Iter1>::value &&
-// 	is_random_access_iterator<Iter2>::value,
-// bool>::type	operator<(const reverse_iterator<Iter1> &rev_it1, const reverse_iterator<Iter2> &rev_it2)
-// 	{ return (rev_it2.base() < rev_it1.base()); }
-
-// template <class Iter1, class Iter2>
-// typename enable_if <
-// 	is_random_access_iterator<Iter1>::value &&
-// 	is_random_access_iterator<Iter2>::value,
-// bool>::type	operator>(const reverse_iterator<Iter1> &rev_it1, const reverse_iterator<Iter2> &rev_it2)
-// 	{ return (rev_it2.base() > rev_it1.base()); }
-
-// template <class Iter1, class Iter2>
-// typename enable_if <
-// 	is_random_access_iterator<Iter1>::value &&
-// 	is_random_access_iterator<Iter2>::value,
-// bool>::type	operator<=(const reverse_iterator<Iter1> &rev_it1, const reverse_iterator<Iter2> &rev_it2)
-// 	{ return (rev_it2.base() <= rev_it1.base()); }
-
-// template <class Iter1, class Iter2>
-// typename enable_if <
-// 	is_random_access_iterator<Iter1>::value &&
-// 	is_random_access_iterator<Iter2>::value,
-// bool>::type	operator>=(const reverse_iterator<Iter1> &rev_it1, const reverse_iterator<Iter2> &rev_it2)
-// 	{ return (rev_it2.base() >= rev_it1.base()); }
-
-// template <class Iter>
-// typename enable_if <
-// 	is_random_access_iterator<Iter>::value,
-// reverse_iterator<Iter> >::type	&operator+=(reverse_iterator<Iter> &rev_it,
-// typename Iter::difference_type n)
-// 	{ rev_it.baseIter_ -= n; return rev_it; }
-
-// template <class Iter>
-// typename enable_if <
-// 	is_random_access_iterator<Iter>::value,
-// reverse_iterator<Iter> >::type	&operator-=(reverse_iterator<Iter> &rev_it,
-// typename Iter::difference_type n)
-// 	{ rev_it.baseIter_ += n; return rev_it; }
 
 }
 
