@@ -6,18 +6,24 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 01:13:03 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/26 14:27:18 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <typeinfo>
 #include <vector>
+#include <stack>
 #include <list>
 #include <deque>
 #include <string>
 
 #include "vector.hpp"
+#include "stack.hpp"
+
+/* std::vector */
+/* std::stack */
+/* ft::map */
 
 template < class T >
 void	printVal(T const &val) {
@@ -29,6 +35,8 @@ class my_input_iter : public ft::base_iterator<std::input_iterator_tag, T> {};
 
 template <class T>
 class my_forward_iter: public ft::base_iterator<std::forward_iterator_tag, T> {};
+
+/*----------- VECTOR -----------*/
 
 /********************************/
 /***         ITERATORS        ***/
@@ -555,8 +563,8 @@ void	ft_swap()
 	std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
 }
 
-int main(void) {
-
+void	ft_vector()
+{
 	/********************************/
 	/***        ITERATORS         ***/
 	/********************************/
@@ -633,8 +641,45 @@ int main(void) {
 
 	/* swap */
 	ft_swap();
+}
 
+/*----------- STACK -----------*/
+
+void	ft_stack()
+{
+	std::stack<int>	s1;
+	std::stack<int>	s2;
+
+	for (int i = 0; i < 10; ++i) {
+		s2.push(i);
+	}
+	std::cout << s1.empty() << std::endl;
+	s1 = s2;
+	std::cout << s1.empty() << std::endl;
+	std::cout << "size: " << s1.size() << std::endl;
+	std::cout << (&s1 == &s2) << std::endl;
+	std::cout << s1.top() << std::endl;
+	s1.push(42);
+	std::cout << s1.top() << std::endl;
+	s1.pop();
+	std::cout << s1.top() << std::endl;
+	s1.push(21);
+	std::cout << (s1 == s2) << std::endl;
+	std::cout << (s1 != s1) << std::endl;
+	std::cout << (s1 < s2) << std::endl;
+	std::cout << (s1 <= s2) << std::endl;
+	std::cout << (s1 > s2) << std::endl;
+	std::cout << (s1 >= s2) << std::endl;
+	std::stack<int>	s3(s2);
+	std::cout << (&s2 == &s3) << std::endl;
+}
+
+int main(void) {
+	
+	ft_vector();
+	ft_stack();
+	// ft_map();
+	
 	// while (1) {}
-
 	return 0;
 }
