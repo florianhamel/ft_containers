@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 14:27:13 by fhamel           ###   ########.fr       */
+/*   Updated: 2021/12/28 02:01:38 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -673,6 +673,69 @@ void	ft_stack()
 	ft::stack<int>	s3(s2);
 	std::cout << (&s2 == &s3) << std::endl;
 }
+
+/*----------- MAP -----------*/
+
+// template <class Key, class T>
+// void	printTree(ft::Node<Key, T> *current)
+// {
+// 	if (current->parent() == NULL) {
+// 		std::cout << current->key() << std::endl;
+// 	}
+// 	if (current->leftChild() == NULL) {
+// 		std::cout << "NIL" << " ";
+// 	} else {
+// 		std::cout << current->leftChild()->key() << " ";
+// 	}
+
+// 	if (current->rightChild() == NULL) {
+// 		std::cout << "NIL" << " ";
+// 	} else {
+// 		std::cout << current->rightChild()->key() << " ";
+// 	}
+
+// 	std::cout << "\n-----\n";
+// 	if (current->leftChild() != NULL) {
+// 		printTree(current->leftChild());
+// 	}
+// 	if (current->leftChild() != NULL) {
+// 		printTree(current->rightChild());
+// 	}
+// 	return;
+// }
+
+// void	ft_test_rotations()
+// {
+// 	ft::Tree<int, int>	tree;
+// 	ft::Node<int, int>	*second_left = tree.newNode(ft::make_pair(2, 0), 0, 0, 0);
+// 	ft::Node<int, int>	*second_right = tree.newNode(ft::make_pair(6, 0), 0, 0, 0);
+// 	ft::Node<int, int>	*first_left = tree.newNode(ft::make_pair(5, 0), 0, second_left, second_right);
+// 	ft::Node<int, int>	*first_right = tree.newNode(ft::make_pair(8, 0), 0, 0, 0);
+// 	ft::Node<int, int>	*root = tree.newNode(ft::make_pair(7, 0), 0, first_left, first_right);
+// 	ft::Node<int, int>	*parent = tree.newNode(ft::make_pair(42, 0), 0, root, 0);
+	
+// 	tree.setRoot(root);
+// 	second_left->setParent(first_left);
+// 	second_right->setParent(first_left);
+// 	first_left->setParent(root);
+// 	first_right->setParent(root);
+// 	root->setParent(parent);
+
+
+// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
+// 	printTree(root);
+// 	std::cout << "end\n";
+
+// 	root = tree.rotateRight(root);
+// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
+// 	printTree(root);
+// 	std::cout  << "end\n";
+
+// 	root = tree.rotateLeft(root);
+// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
+// 	printTree(root);
+// 	std::cout << "end\n";
+// }
 
 int main(void) {
 	
