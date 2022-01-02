@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/28 01:51:05 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/02 01:46:15 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,26 +99,32 @@ class Node {
 			{ right_ = N; }
 };
 
-template <class Key, class T, class Alloc = std::allocator<Node<Key, T> > 
+template <
+	class Key,
+	class T,
+	class Alloc = std::allocator<Node<Key, T> >,
+	class Compare = std::less<Key>
 >
 class Tree {
 
 	private:
-		
+
 		typedef Key									key_type;
 		typedef T									mapped_type;
 		typedef Alloc								allocator_type;
+		typedef Compare								key_compare;
 		typedef pair<const key_type, mapped_type>	value_type;
 		typedef Node<key_type, mapped_type>			node;
 
 		allocator_type	alloc_;
+		key_compare		comp;
 		node			*root_;
 
 	public:
 
 		Tree(void) : root_()
 			{ return; }
-		
+
 		/* 
 		** Temporary copy constructor
 		** Needs deep copy implementation
@@ -135,7 +141,6 @@ class Tree {
 		*/
 		Tree	&operator=(const Tree &tree)
 			{ root_ = tree.root_; return *this; }
-
 
 		node	*newNode(value_type x, node *P, node *LC, node *RC)
 		{
@@ -193,8 +198,49 @@ class Tree {
 			return LC;
 		}
 
+		void	insertNode(node *N)
+		{
+			node	*current = root_;
+			if (root_ == LEAF) {
+				root_ = N;
+				return;
+			}
+			while (current != LEAF) {
+				// std::cout << "current: " << current->key() << " N: " << N->key() << std::endl;
+				if (!comp(N->key(), current->key()) && !comp(current->key(), N->key())) {
+					// modifyMapped();
+					return ;
+				}
+				if (comp(N->key(), current->key())) {
+					if (current->leftChild() == LEAF) {
+						current->setLeftChild(N);
+						N->setParent(current);
+						break;
+					}
+					else {
+						current = current->leftChild();
+					}
+				}
+				else {
+					if (current->rightChild() == LEAF) {
+						std::cout << "current: " << current->key() << " N: " << N->key() << std::endl;
+						current->setRightChild(N);
+						N->setParent(current);
+						break;
+					}
+					else {
+						current = current->rightChild();
+					}
+				}
+			}
+			// fixViolations(N);
+		}
+
 		void	setRoot(node *root)
 			{ root_ = root; }
+
+		node	*getRoot(void) const
+			{ return root_; }
 
 		private:
 
