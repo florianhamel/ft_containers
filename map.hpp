@@ -6,16 +6,12 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/01 21:39:40 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/02 13:09:47 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
-
-# define BLACK 0
-# define RED 1
-# define LEAF NULL
 
 # include <functional>
 # include <memory>
