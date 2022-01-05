@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 01:09:53 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/05 01:56:26 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,66 @@ struct base_iterator {
 };
 
 /********************************/
-/***         ITERATOR         ***/
+/***  BIDIRECTIONAL_ITERATOR  ***/
+/********************************/
+
+/*
+** Bidirectional iterator specially designed for map
+*/
+template <class T, class Pointer = T*, class Reference = T&>
+class bi_iterator :
+public base_iterator<
+	std::bidirectional_iterator_tag,
+	T,
+	ptrdiff_t,
+	Pointer,
+	Reference
+> {
+
+	public:
+
+		typedef typename iterator_traits<bi_iterator>::value_type			value_type;
+		typedef typename iterator_traits<bi_iterator>::difference_type		difference_type;
+		typedef typename iterator_traits<bi_iterator>::pointer				pointer;
+		typedef typename iterator_traits<bi_iterator>::reference			reference;
+		typedef typename iterator_traits<bi_iterator>::iterator_category	iterator_category;
+
+	private:
+		
+		pointer	ptr_;
+	
+	public:
+
+		bi_iterator(void) : ptr_()
+			{ return; }
+
+		bi_iterator(bi_iterator<T> const &it) : ptr_(it.base())
+			{ return; }
+
+		explicit bi_iterator(pointer ptr) : ptr_(ptr)
+			{ return; }
+
+		~bi_iterator(void)
+			{ return; }
+		
+		pointer	base(void) const
+			{ return ptr_; }
+
+};
+
+/********************************/
+/***  RANDOM_ACCESS_ITERATOR  ***/
 /********************************/
 
 template <class T, class Pointer = T*, class Reference = T&>
 class ra_iterator : 
-public base_iterator<std::random_access_iterator_tag, T,
-ptrdiff_t, Pointer, Reference> {
+public base_iterator<
+	std::random_access_iterator_tag,
+	T,
+	ptrdiff_t,
+	Pointer,
+	Reference
+> {
 
 	public:
 
