@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/02 13:09:47 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/05 01:55:50 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,32 @@ class map {
 		// typedef reverse_iterator<iterator>								reverse_iterator;
 		typedef ptrdiff_t													difference_type;
 		typedef size_t														size_type;
-		typedef Tree<Key, T>												tree;
+		typedef Tree<Key, T, Alloc>											tree;
 
 	private:
 
-		tree	tree_;
+		Alloc		alloc_;
+		tree		tree_;
+		size_type	size_;
 	
 	public:
 
-	private:
-		
+	/********************************/
+	/***         MODIFIERS        ***/
+	/********************************/
+
+	bool	empty(void) const
+		{ return (size() == 0); }
+
+	size_type	size(void) const
+		{ return size_; }
+	
+	size_type	max_size(void) const
+		{ return alloc_.max_size(); }
+
+	/********************************/
+	/***         MODIFIERS        ***/
+	/********************************/
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/03 01:58:02 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/05 01:16:57 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Node {
 		typedef Node<key_type, mapped_type>			node;
 
 		bool		color_;
-		value_type	data_;
+		value_type	*data_;
 		Node		*parent_;
 		node		*left_;
 		node		*right_;
@@ -56,12 +56,12 @@ class Node {
 		color_(N.color_), data_(N.data_), parent_(N.parent_), left_(N.left_), right_(N.right_)
 			{ return; }
 
-		Node(value_type data, node *parent, node *left, node *right) :
+		Node(value_type *data, node *parent, node *left, node *right) :
 		color_(RED), data_(data), parent_(parent), left_(left), right_(right)
 			{ return; }
 
 		~Node(void)
-			{ return; }
+		{ return; }
 
 		node	&operator=(const node &N)
 		{
@@ -105,22 +105,22 @@ class Node {
 			return leftChild()->color();
 		}
 
-		bool	leftChildColor(void) const
+		bool	rightChildColor(void) const
 		{
-			if (leftChild() == NULL) {
+			if (rightChild() == NULL) {
 				return BLACK;
 			}
 			return rightChild()->color();
 		}
 		
 		value_type	&data(void)
-			{ return data_; }
+			{ return *data_; }
 
 		const key_type	&key(void) const
-			{ return data_.first; }
+			{ return data_->first; }
 		
 		mapped_type	&mapped(void) const
-			{ return data_.second; }
+			{ return data_->second; }
 		
 		node	*grandParent(void) const
 		{
@@ -196,7 +196,7 @@ class Node {
 			{ color_ = color; }
 
 		void	setMapped(mapped_type x)
-			{ data_.second = x; }
+			{ data_->second = x; }
 
 		void	setParent(node *N)
 			{ parent_ = N; }
@@ -211,6 +211,7 @@ class Node {
 template <
 	class Key,
 	class T,
+	class PairAlloc = std::allocator<pair<const Key, T> >,
 	class Alloc = std::allocator<Node<Key, T> >,
 	class Compare = std::less<Key>
 >
@@ -220,14 +221,16 @@ class Tree {
 
 		typedef Key									key_type;
 		typedef T									mapped_type;
-		typedef Alloc								allocator_type;
 		typedef Compare								key_compare;
 		typedef pair<const key_type, mapped_type>	value_type;
+		typedef PairAlloc							pair_allocator_type;
+		typedef Alloc								allocator_type;
 		typedef Node<key_type, mapped_type>			node;
 
-		allocator_type	alloc_;
-		key_compare		comp;
-		node			*root_;
+		pair_allocator_type	pairAlloc_;
+		allocator_type		alloc_;
+		key_compare			comp;
+		node				*root_;
 
 	public:
 
@@ -251,10 +254,10 @@ class Tree {
 		Tree	&operator=(const Tree &tree)
 			{ root_ = tree.root_; return *this; }
 
-		node	*newNode(value_type x, node *P, node *leftChild, node *rightChild)
+		node	*newNode(value_type *x, node *parent, node *leftChild, node *rightChild)
 		{
 			node	*newN = alloc_.allocate(1, 0);
-			alloc_.construct(newN, Node<Key, T>(x, P, LC, RC));
+			alloc_.construct(newN, Node<Key, T>(x, parent, leftChild, rightChild));
 			return newN;
 		}
 
@@ -322,6 +325,7 @@ class Tree {
 		*/
 		int		checkInsertViolations(node *N)
 		{
+			// std::cout << "key node: " << N->key() << std::endl;
 			if (N->color() == BLACK) {
 				return CASE_OK;
 			}
@@ -424,7 +428,7 @@ class Tree {
 		node	*inOrderPredecessor(node *N)
 		{
 			node	*prede = N->leftChild();
-			while (prede != NULL && !prede->isLeaf()) {
+			while (prede != NULL && prede->rightChild()) {
 				prede = prede->rightChild();
 			}
 			return prede;
@@ -433,23 +437,50 @@ class Tree {
 		node	*inOrderSuccessor(node *N)
 		{
 			node	*succe = N->rightChild();
-			while (succe != NULL && !succe->isLeaf()) {
+			while (succe != NULL && succe->leftChild()) {
 				succe = succe->leftChild();
 			}
 			return succe;
 		}
 
-		# define CASE_ROOT 0
-		# define CASE_RED 1
-		# define CASE_DB_1 2
-
 		/* Delete */
-		void	redDeletion(node *N)
+		bool	checkRedCase(node *N)
 		{
+			if (N->color() == RED) {
+				return true;
+			}
+			if (N->leftChildColor() == RED || N->rightChildColor() == RED) {
+				return true;
+			}
+			return false;
+		}
+
+		void	deleteLeaf(node *N)
+		{
+			if (N->isRoot()) {
+				root_ = NULL;
+			}
+			if (!N->isRoot() && N->isLeftChild()) {
+				N->parent()->setLeftChild(NULL); 
+			}
+			else if (!N->isRoot()) {
+				N->parent()->setRightChild(NULL);
+			}
+			alloc_.destroy(N);
+			alloc_.deallocate(N, 1);
+		}
+
+		node	*deleteReplace(node *N)
+		{
+			node	*replace = NULL;
 			if (N->leftChild() == NULL) {
+				replace = N->rightChild();
+				if (N->isRoot()) {
+					root_ = N->rightChild();
+				}
 				N->rightChild()->setColor(BLACK);
 				N->rightChild()->setParent(N->parent());
-				if (N->isLeftChild()) {
+				if (!N->isRoot() && N->isLeftChild()) {
 					N->parent()->setLeftChild(N->rightChild());
 				}
 				else {
@@ -457,66 +488,120 @@ class Tree {
 				}
 			}
 			else {
+				replace = N->leftChild();
+				if (N->isRoot()) {
+					root_ = N->leftChild();
+				}
 				N->leftChild()->setColor(BLACK);
 				N->leftChild()->setParent(N->parent());
-				if (N->isLeftChild()) {
+				if (!N->isRoot() && N->isLeftChild()) {
 					N->parent()->setLeftChild(N->leftChild());
 				}
-				else {
+				else if (!N->isRoot()) {
 					N->parent()->setRightChild(N->leftChild());
 				}
 			}
+			alloc_.destroy(N);
+			alloc_.deallocate(N, 1);
+			return replace;
 		}
 
-		int		checkDeleteViolations(node *N)
+		void	fixDoubleBlack(node *N)
 		{
-			if (N->isRoot()) {
-				return CASE_ROOT;
-			}
-			if (N->color() == RED ||
-			N->leftChildColor() == RED ||
-			N->rightChildColor() == RED) {
-				return CASE_RED;
-			}
-			if ()
-		}
-
-		void	fixDeleteViolations(node *N)
-		{
-			int	caseIndex = checkDeleteViolations(N);
-			while (1) {
+			while (N) {
 				if (N->isRoot()) {
-					break;
+				// Break case
+					N->setColor(BLACK);
+					return;
 				}
-				else if (N->isLeaf() && N->color() == RED) {
-					break;
+				if (N->siblingColor() == BLACK) {
+				// 1) Sibling is BLACK
+					if (N->sibling() &&
+					(N->sibling()->leftChildColor() == RED ||
+					N->sibling()->rightChildColor() == RED)) {
+					// 1) a) Sibling has RED child
+						if (N->isLeftChild() &&
+						N->sibling()->rightChildColor() == BLACK) {
+						// 1) a) i) LEFT sibling and sibling's far child is BLACK
+							N->sibling()->setColor(RED);
+							N->sibling()->leftChild()->setColor(BLACK);
+							rotateRight(N->sibling());
+						}
+						else if (N->isRightChild() &&
+						N->sibling()->leftChildColor() == BLACK) {
+						// 1) a) ii) RIGHT sibling and sibling's far child is BLACK
+							N->sibling()->setColor(RED);
+							N->sibling()->rightChild()->setColor(BLACK);
+							rotateLeft(N->sibling());
+						}
+						if (N->isLeftChild() &&
+						N->sibling()->rightChildColor() == RED) {
+						// 1) a) iii) LEFT sibling and sibling's far child is RED
+							N->sibling()->setColor(N->parentColor());
+							N->parent()->setColor(BLACK);
+							N->sibling()->rightChild()->setColor(BLACK);
+							rotateLeft(N->parent());
+						}
+						else if (N->isRightChild() &&
+						N->sibling()->leftChildColor() == RED) {
+						// 1) a) iv) RIGHT sibling and sibling's far child is RED
+							N->sibling()->setColor(N->parentColor());
+							N->parent()->setColor(BLACK);
+							N->sibling()->leftChild()->setColor(BLACK);
+							rotateRight(N->parent());
+						}
+						return;
+					}
+					else {
+					// 1) b) Sibling has BLACK children (or sibling is NULL)
+						if (N->sibling()) {
+							N->sibling()->setColor(RED);
+						}
+						if (N->parentColor() == RED) {
+							N->parent()->setColor(BLACK);
+							return;
+						}
+						else {
+							fixDoubleBlack(N->parent());
+							return;
+						}
+					}
 				}
-				else if (caseIndex == CASE_RED) {
-					redDeletion(N);
-					break;
+				else {
+				// 2) Sibling is RED
+					N->sibling()->setColor(N->parentColor());
+					N->parent()->setColor(RED);
+					if (N->isLeftChild()) {
+						rotateLeft(N->parent());
+					}
+					else {
+						rotateRight(N->parent());
+					}
+					fixDoubleBlack(N);
+					return;
 				}
-				caseIndex = checkDeleteViolations();
 			}
 		}
 
 		void	deleteNode(node *N)
 		{
 			node	*replace = NULL;
+			bool	doubleBlack = false;
 			if (N->isLeaf()) {
-				fixDeleteViolations(N);
-				if (N->isLeftChild()) {
-					N->parent()->setLeftChild(NULL); 
+				if (!checkRedCase(N)) {
+					fixDoubleBlack(N);
 				}
-				else {
-					N->parent()->setRightChild(NULL);
-				}
-				alloc_.destroy(toDelete);
-				alloc_.deallocate(toDelete, 1);
-				return;
+				deleteLeaf(N);
 			}
 			else if (N->leftChild() == NULL || N->rightChild() == NULL) {
-				alloc_.destroy(toDelete);
-				alloc_.deallocate(toDelete, 1);
+				// std::cout << "node key: " << N->key() << std::endl;
+				if (!checkRedCase(N)) {
+					doubleBlack = true;
+				}
+				N = deleteReplace(N);
+				if (doubleBlack) {
+					fixDoubleBlack(N);
+				}
 			}
 			else {
 				replace = inOrderPredecessor(N);
