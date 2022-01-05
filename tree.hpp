@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/05 01:16:57 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/05 02:16:21 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,19 +229,22 @@ class Tree {
 
 		pair_allocator_type	pairAlloc_;
 		allocator_type		alloc_;
-		key_compare			comp;
+		key_compare			comp_;
 		node				*root_;
 
 	public:
 
-		Tree(void) : root_()
+		Tree(const pair_allocator_type &pairAlloc = pair_allocator_type(),
+		const allocator_type &alloc = allocator_type(),
+		const key_compare &comp = key_compare()) :
+		pairAlloc_(pairAlloc), alloc_(alloc), comp_(comp), root_()
 			{ return; }
 
 		/* 
 		** Temporary copy constructor
 		** Needs deep copy implementation
 		*/
-		Tree(const Tree &tree) : root_(tree.root_)
+		explicit Tree(const Tree &tree) : root_(tree.root_)
 			{ return; }
 		
 		~Tree(void)
@@ -325,7 +328,6 @@ class Tree {
 		*/
 		int		checkInsertViolations(node *N)
 		{
-			// std::cout << "key node: " << N->key() << std::endl;
 			if (N->color() == BLACK) {
 				return CASE_OK;
 			}
@@ -396,12 +398,12 @@ class Tree {
 				root_ = N;
 				return;
 			}
+			if (!comp_(N->key(), current->key()) && !comp_(current->key(), N->key())) {
+				// modifyMapped(); -> modify the value if key already exists
+				return ;
+			}
 			while (current != NULL) {
-				if (!comp(N->key(), current->key()) && !comp(current->key(), N->key())) {
-					// modifyMapped(); -> modify the value if key already exists
-					return ;
-				}
-				if (comp(N->key(), current->key())) {
+				if (comp_(N->key(), current->key())) {
 					if (current->leftChild() == NULL) {
 						current->setLeftChild(N);
 						N->setParent(current);
