@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/05 01:56:26 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/07 12:09:14 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ public base_iterator<
 		typedef typename iterator_traits<bi_iterator>::pointer				pointer;
 		typedef typename iterator_traits<bi_iterator>::reference			reference;
 		typedef typename iterator_traits<bi_iterator>::iterator_category	iterator_category;
+		typedef typename T::value_type										pair_value_type;
 
 	private:
 		
@@ -75,6 +76,40 @@ public base_iterator<
 		
 		pointer	base(void) const
 			{ return ptr_; }
+
+		/********************************/
+		/***    OPERATOR OVERLOADS    ***/
+		/********************************/
+
+		template <class Iter>
+		bool	operator=(const Iter &it)
+			{ ptr_ = it.base(); return *this; }
+
+		template <class Iter>
+		bool	operator==(const Iter &it) const
+			{ return (base() == it.base()); }
+		
+		template <class Iter>
+		bool	operator!=(const Iter &it) const
+			{ return !(*this == it); }
+
+		pair_value_type	&operator*(void) const
+			{ return ptr_->operator*(); }
+
+		pair_value_type	*operator->(void) const
+			{ return &(operator*()); }
+		
+		bi_iterator	operator++(void)
+			{ ptr_ = ptr_->next(); return *this; }
+
+		void		operator++(int)
+			{ pointer retPtr = ptr_; ++ptr_; return retPtr; }
+
+		bi_iterator	operator--(void)
+			{ ptr_ = ptr_->prev(); return *this; }
+
+		void		operator--(int)
+			{ pointer retPtr = ptr_; --ptr_; return retPtr; }
 
 };
 
@@ -141,7 +176,7 @@ public base_iterator<
 			{ return *base(); }
 
 		pointer			operator->(void) const
-			{ return base(); }
+			{ return &(operator*()); }
 
 		ra_iterator		&operator++(void)
 			{ ++ptr_; return *this; }
@@ -260,7 +295,7 @@ class reverse_iterator {
 			{ iterator_type tmp = baseIter_; return *--tmp; }
 
 		pointer				operator->(void) const
-			{ return &operator*(); }
+			{ return &(operator*()); }
 
 		reverse_iterator	&operator++(void)
 			{ --baseIter_; return *this; }
