@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/07 12:09:14 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/08 23:16:18 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,89 +28,6 @@ struct base_iterator {
 	typedef Pointer		pointer;
 	typedef Reference	reference;
 	typedef Category	iterator_category;
-};
-
-/********************************/
-/***  BIDIRECTIONAL_ITERATOR  ***/
-/********************************/
-
-/*
-** Bidirectional iterator specially designed for map
-*/
-template <class T, class Pointer = T*, class Reference = T&>
-class bi_iterator :
-public base_iterator<
-	std::bidirectional_iterator_tag,
-	T,
-	ptrdiff_t,
-	Pointer,
-	Reference
-> {
-
-	public:
-
-		typedef typename iterator_traits<bi_iterator>::value_type			value_type;
-		typedef typename iterator_traits<bi_iterator>::difference_type		difference_type;
-		typedef typename iterator_traits<bi_iterator>::pointer				pointer;
-		typedef typename iterator_traits<bi_iterator>::reference			reference;
-		typedef typename iterator_traits<bi_iterator>::iterator_category	iterator_category;
-		typedef typename T::value_type										pair_value_type;
-
-	private:
-		
-		pointer	ptr_;
-	
-	public:
-
-		bi_iterator(void) : ptr_()
-			{ return; }
-
-		bi_iterator(bi_iterator<T> const &it) : ptr_(it.base())
-			{ return; }
-
-		explicit bi_iterator(pointer ptr) : ptr_(ptr)
-			{ return; }
-
-		~bi_iterator(void)
-			{ return; }
-		
-		pointer	base(void) const
-			{ return ptr_; }
-
-		/********************************/
-		/***    OPERATOR OVERLOADS    ***/
-		/********************************/
-
-		template <class Iter>
-		bool	operator=(const Iter &it)
-			{ ptr_ = it.base(); return *this; }
-
-		template <class Iter>
-		bool	operator==(const Iter &it) const
-			{ return (base() == it.base()); }
-		
-		template <class Iter>
-		bool	operator!=(const Iter &it) const
-			{ return !(*this == it); }
-
-		pair_value_type	&operator*(void) const
-			{ return ptr_->operator*(); }
-
-		pair_value_type	*operator->(void) const
-			{ return &(operator*()); }
-		
-		bi_iterator	operator++(void)
-			{ ptr_ = ptr_->next(); return *this; }
-
-		void		operator++(int)
-			{ pointer retPtr = ptr_; ++ptr_; return retPtr; }
-
-		bi_iterator	operator--(void)
-			{ ptr_ = ptr_->prev(); return *this; }
-
-		void		operator--(int)
-			{ pointer retPtr = ptr_; --ptr_; return retPtr; }
-
 };
 
 /********************************/
@@ -238,6 +155,88 @@ public base_iterator<
 };
 
 /********************************/
+/***  BIDIRECTIONAL_ITERATOR  ***/
+/********************************/
+
+/*
+** Bidirectional iterator designed to work with BST
+*/
+template <class T, class Pointer = T*, class Reference = T&>
+class bi_iterator :
+public base_iterator<
+	std::bidirectional_iterator_tag,
+	T,
+	ptrdiff_t,
+	Pointer,
+	Reference
+> {
+
+	public:
+
+		typedef typename iterator_traits<bi_iterator>::value_type			value_type;
+		typedef typename iterator_traits<bi_iterator>::difference_type		difference_type;
+		typedef typename iterator_traits<bi_iterator>::pointer				pointer;
+		typedef typename iterator_traits<bi_iterator>::reference			reference;
+		typedef typename iterator_traits<bi_iterator>::iterator_category	iterator_category;
+		typedef typename T::value_type										depth_type;
+
+	private:
+		
+		pointer	ptr_;
+	
+	public:
+
+		bi_iterator(void) : ptr_()
+			{ return; }
+
+		bi_iterator(bi_iterator<T> const &it) : ptr_(it.base())
+			{ return; }
+
+		explicit bi_iterator(pointer ptr) : ptr_(ptr)
+			{ return; }
+
+		~bi_iterator(void)
+			{ return; }
+		
+		pointer	base(void) const
+			{ return ptr_; }
+
+		/********************************/
+		/***    OPERATOR OVERLOADS    ***/
+		/********************************/
+
+		bi_iterator	&operator=(const bi_iterator &it)
+			{ ptr_ = it.base(); return *this; }
+
+		template <class Iter>
+		bool		operator==(const Iter &it) const
+			{ return (base() == it.base()); }
+		
+		template <class Iter>
+		bool		operator!=(const Iter &it) const
+			{ return !(*this == it); }
+
+		depth_type	&operator*(void) const
+			{ return ptr_->operator*(); }
+
+		depth_type	*operator->(void) const
+			{ return &(operator*()); }
+		
+		bi_iterator	&operator++(void)
+			{ ptr_ = ptr_->next(); return *this; }
+
+		bi_iterator	operator++(int)
+			{ pointer retPtr = ptr_; ++ptr_; return retPtr; }
+
+		bi_iterator	&operator--(void)
+			{ ptr_ = ptr_->prev(); return *this; }
+
+		bi_iterator	operator--(int)
+			{ pointer retPtr = ptr_; --ptr_; return retPtr; }
+
+};
+
+/********************************/
 /***     REVERSE_ITERATOR     ***/
 /********************************/
 
@@ -345,6 +344,78 @@ class reverse_iterator {
 
 		reference			operator[](difference_type n) const
 			{ iterator_type tmp = baseIter_; return *(--tmp - n); }
+
+};
+
+template <class T, class Pointer, class Reference>
+class reverse_iterator<bi_iterator<T, Pointer, Reference> > {
+
+	public:
+
+		typedef bi_iterator<T, Pointer, Reference>			iterator_type;
+		typedef typename iterator_type::value_type			value_type;
+		typedef typename iterator_type::difference_type		difference_type;
+		typedef typename iterator_type::pointer				pointer;
+		typedef typename iterator_type::reference			reference;
+		typedef typename iterator_type::iterator_category	iterator_category;
+		typedef typename iterator_type::depth_type			depth_type;
+
+
+	private:
+
+		iterator_type	baseIter_;
+
+	public:
+
+		reverse_iterator(void) : baseIter_()
+			{ return; }
+
+		explicit reverse_iterator(iterator_type it) : baseIter_(it)
+			{ return; }
+
+		template <class _Iter>
+		reverse_iterator(const reverse_iterator<_Iter> &rev_it) : baseIter_(rev_it.base())
+			{ return; }
+
+		~reverse_iterator(void)
+			{ return; }
+
+		iterator_type	base(void) const
+			{ return baseIter_; }
+
+		/********************************/
+		/***    OPERATOR OVERLOADS    ***/
+		/********************************/
+
+		template <class _Iter>
+		reverse_iterator	&operator=(reverse_iterator<_Iter> const &rev_it)
+			{ baseIter_ = rev_it.base(); return *this; }
+
+		template <class _Iter>
+		bool				operator==(_Iter const &rev_it) const
+			{ return (base() == rev_it.base()); }
+
+		template <class _Iter>
+		bool				operator!=(_Iter const &rev_it) const
+			{ return (base() != rev_it.base()); }
+
+		depth_type			&operator*(void) const
+			{ iterator_type tmp = baseIter_; return *--tmp; }
+
+		depth_type			*operator->(void) const
+			{ return &(operator*()); }
+
+		reverse_iterator	&operator++(void)
+			{ --baseIter_; return *this; }
+
+		reverse_iterator	operator++(int)
+			{ reverse_iterator retIter = *this; --baseIter_; return retIter; }
+		
+		reverse_iterator	&operator--(void)
+			{ ++baseIter_; return *this; }
+
+		reverse_iterator	operator--(int)
+			{ reverse_iterator retIter = *this; ++baseIter_; return retIter; }
 
 };
 
