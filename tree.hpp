@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/09 23:41:39 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/10 00:26:09 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ class Node {
 
 	public:
 
-		typedef Key									key_type;
-		typedef T									mapped_type;
-		typedef pair<const key_type, mapped_type>	value_type;
-		typedef Node<key_type, mapped_type>			node;
+		typedef Key										key_type;
+		typedef T										mapped_type;
+		typedef ft::pair<const key_type, mapped_type>	value_type;
+		typedef Node<key_type, mapped_type>				node;
 
 	private:
 
@@ -325,15 +325,15 @@ class Tree {
 
 	private:
 
-		typedef Key									key_type;
-		typedef T									mapped_type;
-		typedef pair<const key_type, mapped_type>	value_type;
-		typedef Compare								key_compare;
-		typedef PairAlloc							pair_allocator_type;
-		typedef Alloc								allocator_type;
-		typedef size_t								size_type;
-		typedef Node<key_type, mapped_type>			node;
-		typedef Iterator							iterator;
+		typedef Key										key_type;
+		typedef T										mapped_type;
+		typedef ft::pair<const key_type, mapped_type>	value_type;
+		typedef Compare									key_compare;
+		typedef PairAlloc								pair_allocator_type;
+		typedef Alloc									allocator_type;
+		typedef size_t									size_type;
+		typedef Node<key_type, mapped_type>				node;
+		typedef Iterator								iterator;
 
 		pair_allocator_type	pairAlloc_;
 		allocator_type		alloc_;
@@ -465,10 +465,10 @@ class Tree {
 			}
 		}
 
-		pair<iterator, bool>	insertNode(const value_type &val)
+		ft::pair<iterator, bool>	insertNode(const value_type &val)
 		{
 			node	*N = newNode(val);
-			pair<iterator, bool>	retPair = make_pair<iterator, bool>(iterator(N), true);
+			ft::pair<iterator, bool>	retPair = ft::make_pair<iterator, bool>(iterator(N), true);
 			if (root_ == NULL) {
 				root_ = N;
 				updateEndNodes();
@@ -649,7 +649,7 @@ class Tree {
 		{
 			node	*newN = alloc_.allocate(1, 0);
 			value_type	*newPair = pairAlloc_.allocate(1, 0);
-			pairAlloc_.construct(newPair, pair<const key_type, mapped_type>(val));
+			pairAlloc_.construct(newPair, ft::pair<const key_type, mapped_type>(val));
 			alloc_.construct(newN, node(newPair));
 			return newN;
 		}

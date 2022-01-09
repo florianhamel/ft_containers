@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/09 23:55:04 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/10 00:23:28 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ class map {
 			if (N) {
 				return N->mapped();
 			}
-			value_type	newPair = make_pair<const key_type, mapped_type>(k, mapped_type());
+			value_type	newPair = ft::make_pair<const key_type, mapped_type>(k, mapped_type());
 			N = tree_.insertNode(newPair).first.base();
 			return N->mapped();
 		}
@@ -257,16 +257,16 @@ class map {
 
 		pair<iterator, iterator>	equal_range(const key_type &k)
 		{
-			iterator	lower = lower_bound(k, tree_.root());
-			iterator	upper = upper_bound(k, tree_.root());
-			return make_pair<iterator, iterator>(lower, upper);
+			iterator	lower = lower_bound(k);
+			iterator	upper = upper_bound(k);
+			return ft::make_pair<iterator, iterator>(lower, upper);
 		}
 
 		pair<const_iterator, const_iterator>	equal_range(const key_type &k) const
 		{
-			const_iterator	lower = lower_bound(k, tree_.root());
-			const_iterator	upper = upper_bound(k, tree_.root());
-			return make_pair<const_iterator, const_iterator>(lower, upper);
+			const_iterator	lower = lower_bound(k);
+			const_iterator	upper = upper_bound(k);
+			return ft::make_pair<const_iterator, const_iterator>(lower, upper);
 		}
 
 	/********************************/
