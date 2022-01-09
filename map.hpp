@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/08 22:48:09 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/09 23:55:04 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,27 @@ template <
 >
 class map {
 
+	class ValueCompare {
+
+		private:
+			Compare	comp_;
+
+		public:
+			ValueCompare(const Compare &comp = Compare()) : comp_(comp)
+				{ return; }
+
+			bool	operator()(const Key &x, const Key &y) const
+				{ return comp_(x, y); }
+	
+	};
+
 	public:
 	
 		typedef Key															key_type;
 		typedef T															mapped_type;
 		typedef pair<const key_type, mapped_type>							value_type;
 		typedef Compare														key_compare;
-		// typedef value_compare											???;
+		typedef map::ValueCompare											value_compare;
 		typedef Alloc														allocator_type;
 		typedef typename allocator_type::reference							reference;
 		typedef typename allocator_type::const_reference					const_reference;
@@ -64,6 +78,15 @@ class map {
 		const allocator_type &alloc = allocator_type()) :
 		comp_(comp), alloc_(alloc), tree_(tree(comp_, alloc_)), size_()
 			{ return; }
+
+		map(const map &m)
+			{ tree_ = m.tree_; }
+
+		~map(void)
+			{ return; }
+		
+		map	&operator=(const map &m)
+			{ tree_ = m.tree_; return *this; }
 		
 	/********************************/
 	/***         ITERATORS        ***/
@@ -175,6 +198,75 @@ class map {
 			for (; first != last; ++first) {
 				tree_.deleteNode(first.base());
 			}
+		}
+		
+		/*** SWAP ***/
+		void	swap(map &m)
+		{
+			node	*tmp = tree_.root();
+			tree_.setRoot(m.root());
+			m.tree_.setRoot(tmp);
+		}
+
+		/*** CLEAR ***/
+		void	clear(void)
+		{
+			tree_.deleteTree(tree_.root());
+			tree_.setRoot(NULL);
+			tree_.updateEndNodes();
+			size_ = 0;
+		}
+
+	/********************************/
+	/***        OBSERVERS         ***/
+	/********************************/
+
+		value_compare	value_comp(void) const
+			{ return value_compare(); }
+		
+		key_compare	key_comp(void) const
+			{ return comp_; }
+
+	/********************************/
+	/***        OPERATIONS        ***/
+	/********************************/
+
+		/*** FIND ***/
+		iterator	find(const key_type &k)
+			{ return iterator(tree_.search(k, tree_.root())); }
+
+		const_iterator	find(const key_type &k) const
+			{ return const_iterator(tree_.search(k, tree_.root())); }
+
+		/*** COUNT ***/
+		size_type	count(const key_type &k) const
+			{ return countNodes(k, tree_.root(), 0); }
+		
+		/*** LOWER BOUND ***/
+		iterator	lower_bound(const key_type &k)
+			{ return iterator(tree_.lowerBoundNode(k, tree_.root())); }
+
+		const_iterator	lower_bound(const key_type &k) const
+			{ return const_iterator(tree_.lowerBoundNode(k, tree_.root())); }
+
+		iterator	upper_bound(const key_type &k)
+			{ return iterator(tree_.upperBoundNode(k, tree_.root())); }
+		
+		const_iterator	upper_bound(const key_type &k) const
+			{ return const_iterator(tree_.upperBoundNode(k, tree_.root())); }
+
+		pair<iterator, iterator>	equal_range(const key_type &k)
+		{
+			iterator	lower = lower_bound(k, tree_.root());
+			iterator	upper = upper_bound(k, tree_.root());
+			return make_pair<iterator, iterator>(lower, upper);
+		}
+
+		pair<const_iterator, const_iterator>	equal_range(const key_type &k) const
+		{
+			const_iterator	lower = lower_bound(k, tree_.root());
+			const_iterator	upper = upper_bound(k, tree_.root());
+			return make_pair<const_iterator, const_iterator>(lower, upper);
 		}
 
 	/********************************/
