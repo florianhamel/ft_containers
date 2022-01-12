@@ -6,13 +6,14 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 16:50:10 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/08 23:16:18 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/11 14:15:47 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_HPP
 # define ITERATOR_HPP
 
+# include <type_traits>
 # include "type_traits.hpp"
 
 namespace ft {
@@ -215,9 +216,9 @@ public base_iterator<
 		template <class Iter>
 		bool		operator!=(const Iter &it) const
 			{ return !(*this == it); }
-
+			
 		depth_type	&operator*(void) const
-			{ return ptr_->operator*(); }
+			{ return ptr_->data(); }
 
 		depth_type	*operator->(void) const
 			{ return &(operator*()); }
@@ -226,13 +227,88 @@ public base_iterator<
 			{ ptr_ = ptr_->next(); return *this; }
 
 		bi_iterator	operator++(int)
-			{ pointer retPtr = ptr_; ++ptr_; return retPtr; }
+			{ bi_iterator it = bi_iterator(ptr_); ptr_ = ptr_->next(); return it; }
 
 		bi_iterator	&operator--(void)
 			{ ptr_ = ptr_->prev(); return *this; }
 
 		bi_iterator	operator--(int)
-			{ pointer retPtr = ptr_; --ptr_; return retPtr; }
+			{ bi_iterator it = bi_iterator(ptr_); ptr_ = ptr_->prev(); return it; }
+
+};
+
+template <class T>
+class bi_iterator<T, const T*, const T&> :
+public base_iterator<
+	std::bidirectional_iterator_tag,
+	T,
+	ptrdiff_t,
+	const T*,
+	const T&
+> {
+
+	public:
+
+		typedef typename iterator_traits<bi_iterator>::value_type			value_type;
+		typedef typename iterator_traits<bi_iterator>::difference_type		difference_type;
+		typedef typename iterator_traits<bi_iterator>::pointer				pointer;
+		typedef typename iterator_traits<bi_iterator>::reference			reference;
+		typedef typename iterator_traits<bi_iterator>::iterator_category	iterator_category;
+		typedef const typename T::value_type								depth_type;
+
+	private:
+		
+		pointer	ptr_;
+	
+	public:
+
+		bi_iterator(void) : ptr_()
+			{ return; }
+
+		bi_iterator(bi_iterator<T> const &it) : ptr_(it.base())
+			{ return; }
+
+		explicit bi_iterator(pointer ptr) : ptr_(ptr)
+			{ return; }
+
+		~bi_iterator(void)
+			{ return; }
+		
+		pointer	base(void) const
+			{ return ptr_; }
+
+		/********************************/
+		/***    OPERATOR OVERLOADS    ***/
+		/********************************/
+
+		bi_iterator	&operator=(const bi_iterator &it)
+			{ ptr_ = it.base(); return *this; }
+
+		template <class Iter>
+		bool		operator==(const Iter &it) const
+			{ return (base() == it.base()); }
+		
+		template <class Iter>
+		bool		operator!=(const Iter &it) const
+			{ return !(*this == it); }
+			
+		depth_type	&operator*(void) const
+			{ return ptr_->constData(); }
+
+		depth_type	*operator->(void) const
+			{ return &(operator*()); }
+		
+		bi_iterator	&operator++(void)
+			{ ptr_ = ptr_->next(); return *this; }
+
+		bi_iterator	operator++(int)
+			{ bi_iterator it = bi_iterator(ptr_); ptr_ = ptr_->next(); return it; }
+
+		bi_iterator	&operator--(void)
+			{ ptr_ = ptr_->prev(); return *this; }
+
+		bi_iterator	operator--(int)
+			{ bi_iterator it = bi_iterator(ptr_); ptr_ = ptr_->prev(); return it; }
 
 };
 
