@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/28 02:01:38 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/11 17:49:57 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <list>
 #include <deque>
 #include <string>
+#include <map>
 
 #include "vector.hpp"
 #include "stack.hpp"
@@ -31,10 +32,21 @@ void	printVal(T const &val) {
 }
 
 template <class T>
-class my_input_iter : public ft::base_iterator<std::input_iterator_tag, T> {};
+struct foo {
+	
+	foo(void) : var1(), var2(), var3() {}
+	
+	T	var1;
+	T	var2;
+	T	var3;
 
-template <class T>
-class my_forward_iter: public ft::base_iterator<std::forward_iterator_tag, T> {};
+};
+
+// template <class T>
+// class my_input_iter : public ft::base_iterator<std::input_iterator_tag, T> {};
+
+// template <class T>
+// class my_forward_iter: public ft::base_iterator<std::forward_iterator_tag, T> {};
 
 /*----------- VECTOR -----------*/
 
@@ -676,6 +688,16 @@ void	ft_stack()
 
 /*----------- MAP -----------*/
 
+#include "utility.hpp"
+#include "map.hpp"
+
+std::vector<ft::pair<const int, int> >	vec;
+
+typedef	ft::map<int, int>::iterator					iterator;
+typedef	ft::map<int, int>::const_iterator			const_iterator;
+typedef	ft::map<int, int>::reverse_iterator			reverse_iterator;
+typedef	ft::map<int, int>::const_reverse_iterator	const_reverse_iterator;
+
 // template <class Key, class T>
 // void	printTree(ft::Node<Key, T> *current)
 // {
@@ -698,50 +720,292 @@ void	ft_stack()
 // 	if (current->leftChild() != NULL) {
 // 		printTree(current->leftChild());
 // 	}
-// 	if (current->leftChild() != NULL) {
+// 	if (current->rightChild() != NULL) {
 // 		printTree(current->rightChild());
 // 	}
 // 	return;
 // }
 
-// void	ft_test_rotations()
-// {
-// 	ft::Tree<int, int>	tree;
-// 	ft::Node<int, int>	*second_left = tree.newNode(ft::make_pair(2, 0), 0, 0, 0);
-// 	ft::Node<int, int>	*second_right = tree.newNode(ft::make_pair(6, 0), 0, 0, 0);
-// 	ft::Node<int, int>	*first_left = tree.newNode(ft::make_pair(5, 0), 0, second_left, second_right);
-// 	ft::Node<int, int>	*first_right = tree.newNode(ft::make_pair(8, 0), 0, 0, 0);
-// 	ft::Node<int, int>	*root = tree.newNode(ft::make_pair(7, 0), 0, first_left, first_right);
-// 	ft::Node<int, int>	*parent = tree.newNode(ft::make_pair(42, 0), 0, root, 0);
+void	ft_fill_vec() {
+	for (int i = 0; i < 10; ++i) {
+		vec.push_back(ft::make_pair<const int, int>(i, 10 - i));
+	}
+}
+
+/********************************/
+/***        ITERATORS         ***/
+/********************************/
+void	ft_map_iterator()
+{
+	std::cout << "*----- ft_map_iterator() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	iterator	it = mp.begin(), ite = mp.end();
+
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << (*it).first << " | " << (*it).second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (++it)->first << " | " << it->second << std::endl;
+	std::cout << (it++)->first << " | " << it->second << std::endl;
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (--ite)->first << " | " << ite->second << std::endl;
+	std::cout << (ite--)->first << " | " << ite->second << std::endl;
+	std::cout << ite->first << " | " << ite->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (it == it) << std::endl;
+	std::cout << (it != it) << std::endl;
+
+	it = mp.begin();
+	for (; it != ite; ++it) {
+		std::cout << it->second << " ";
+	}
+	std::cout << std::endl;
+}
+
+void	ft_map_const_iterator()
+{
+	std::cout << "*----- ft_map_const_iterator() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	const_iterator	it = mp.begin(), ite = mp.end();
+
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << (*it).first << " | " << (*it).second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (++it)->first << " | " << it->second << std::endl;
+	std::cout << (it++)->first << " | " << it->second << std::endl;
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (--ite)->first << " | " << ite->second << std::endl;
+	std::cout << (ite--)->first << " | " << ite->second << std::endl;
+	std::cout << ite->first << " | " << ite->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (it == it) << std::endl;
+	std::cout << (it != it) << std::endl;
+
+	it = mp.begin();
+	for (; it != ite; ++it) {
+		std::cout << it->second << " ";
+	}
+	std::cout << std::endl;
+}
+
+void	ft_map_reverse_iterator()
+{
+	std::cout << "*----- ft_map_reverse_iterator() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	reverse_iterator	it = mp.rbegin(), ite = mp.rend();
+
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << (*it).first << " | " << (*it).second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (++it)->first << " | " << it->second << std::endl;
+	std::cout << (it++)->first << " | " << it->second << std::endl;
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (--ite)->first << " | " << ite->second << std::endl;
+	std::cout << (ite--)->first << " | " << ite->second << std::endl;
+	std::cout << ite->first << " | " << ite->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (it == it) << std::endl;
+	std::cout << (it != it) << std::endl;
+
+	it = mp.rbegin();
+	for (; it != ite; ++it) {
+		std::cout << it->second << " ";
+	}
+	std::cout << std::endl;
+}
+
+void	ft_map_const_reverse_iterator()
+{
+	std::cout << "*----- ft_map_const_reverse_iterator() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	const_reverse_iterator	it = mp.rbegin(), ite = mp.rend();
+
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << (*it).first << " | " << (*it).second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (++it)->first << " | " << it->second << std::endl;
+	std::cout << (it++)->first << " | " << it->second << std::endl;
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (--ite)->first << " | " << ite->second << std::endl;
+	std::cout << (ite--)->first << " | " << ite->second << std::endl;
+	std::cout << ite->first << " | " << ite->second << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << (it == it) << std::endl;
+	std::cout << (it != it) << std::endl;
+
+	it = mp.rbegin();
+	for (; it != ite; ++it) {
+		std::cout << it->second << " ";
+	}
+	std::cout << std::endl;
+}
+
+/********************************/
+/***        CAPACITY          ***/
+/********************************/
+
+void	ft_map_size_empty()
+{
+	std::cout << "*----- ft_map_size_empty() -----*" << std::endl;
+	ft::map<int, int>	mp;
+	ft::map<int, int>	mp_range(vec.begin(), vec.end());
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	std::cout << "range | size: " << mp_range.size() << " | " << "empty: " << mp_range.empty() << std::endl;
+	mp_range.erase(7); mp_range.erase(5); mp_range.erase(2);
+	std::cout << "range | size: " << mp_range.size() << " | " << "empty: " << mp_range.empty() << std::endl;
+	mp_range.clear();
+	std::cout << "range | size: " << mp_range.size() << " | " << "empty: " << mp_range.empty() << std::endl;
+	mp_range.insert(ft::make_pair(42, 42));
+	std::cout << "range | size: " << mp_range.size() << " | " << "empty: " << mp_range.empty() << std::endl;
 	
-// 	tree.setRoot(root);
-// 	second_left->setParent(first_left);
-// 	second_right->setParent(first_left);
-// 	first_left->setParent(root);
-// 	first_right->setParent(root);
-// 	root->setParent(parent);
+	std::cout << std::endl;
+}
 
+void	ft_map_max_size()
+{
+	std::cout << "*----- ft_map_max_size() -----*" << std::endl;
+	ft::map<int, int>						mp1;
+	ft::map<std::string, float>				mp2;
+	ft::map<char, int>						mp3;
+	ft::map<std::vector<foo<char> >, char>	mp4;
+	ft::map<foo<std::string>, foo<float> >	mp5;
 
-// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
-// 	printTree(root);
-// 	std::cout << "end\n";
+	std::cout << mp1.max_size() << std::endl;
+	std::cout << mp2.max_size() << std::endl;
+	std::cout << mp3.max_size() << std::endl;
+	std::cout << mp4.max_size() << std::endl;
+	std::cout << mp5.max_size() << std::endl;
+	
+	std::cout << std::endl;
+}
 
-// 	root = tree.rotateRight(root);
-// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
-// 	printTree(root);
-// 	std::cout  << "end\n";
+/********************************/
+/***   	  ELEMENT ACCESS      ***/
+/********************************/
+void	ft_map_at_operator()
+{
+	std::cout << "*----- ft_map_at_operator() -----*" << std::endl;
+	ft::map<float, float>	mp(vec.begin(), vec.end());
+	std::cout << mp[7] << std::endl;
+	mp[42] = 42;
+	mp[3.2] = 3.5;
+	ft::map<float, float>::const_iterator	it = mp.begin(), ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;;
+	}
+	mp[1] = 2021;
+	mp[2] = 2022;
+	mp[50];
+	it = mp.begin(); ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;;
+	}
+	std::cout << std::endl;
+}
 
-// 	root = tree.rotateLeft(root);
-// 	std::cout << "parent's left child: " << parent->leftChild()->key() << std::endl;
-// 	printTree(root);
-// 	std::cout << "end\n";
-// }
+/********************************/
+/***         MODIFIERS        ***/
+/********************************/
+void	ft_map_insert()
+{
+	std::cout << "*----- ft_map_insert() -----*" << std::endl;
+	ft::map<int, int>	mp;
+	ft::map<int, int>	mp_range(vec.begin(), vec.end());
+	iterator	it = mp.begin(), ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << std::endl;
+	}
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	ft::pair<iterator, bool>	retPair = mp.insert(ft::make_pair(42, 84));
+	std::cout << retPair.first->first << " | " << retPair.first->second << " | " << retPair.second << std::endl;
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	it = mp.begin();
+	std::cout << it->first << " | " << it->second << std::endl;
+	retPair = mp.insert(ft::make_pair(42, 21));
+	std::cout << retPair.first->first << " | " << retPair.first->second << " | " << retPair.second << std::endl;
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	it = mp.begin();
+	std::cout << it->first << " | " << it->second << std::endl;
+	mp.insert(ft::make_pair(-1, -2));
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	it = mp.begin();
+	std::cout << it->first << " | " << it->second << std::endl;
+	std::cout << mp.insert(--mp.end(), ft::make_pair(404, 404))->first << std::endl;;
+	it = --mp.end();
+	std::cout << it->first << " | " << it->second << std::endl;
+	mp.insert(mp_range.begin(), mp_range.end());
+	it = mp.begin(); ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;
+	}
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	std::cout << std::endl;
+}
+
+void	ft_map_erase()
+{
+	std::cout << "*----- ft_map_erase() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	iterator	it = mp.begin(), ite = mp.end();
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	std::cout << mp.erase(2) << std::endl;
+	std::cout << mp.erase(100) << std::endl;
+	std::cout << mp.erase(-3) << std::endl;
+	std::cout << mp.erase(7) << std::endl;
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;
+	}
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	it = ++(++mp.begin());
+	mp.erase(it);
+	it = mp.begin(); ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;
+	}
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	mp.erase(mp.begin(), mp.end());
+	it = mp.begin(); ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " | " << it->second << std::endl;
+	}
+	std::cout << "default | size: " << mp.size() << " | " << "empty: " << mp.empty() << std::endl;
+	std::cout << std::endl;
+}
+
+void	ft_map() {
+	ft_fill_vec();
+
+	/********************************/
+	/***        ITERATORS         ***/
+	/********************************/
+	ft_map_iterator();
+	ft_map_const_iterator();
+	ft_map_reverse_iterator();
+	ft_map_const_reverse_iterator();
+
+	/********************************/
+	/***        CAPACITY          ***/
+	/********************************/
+	ft_map_size_empty();
+	ft_map_max_size();
+	ft_map_at_operator();
+
+	/********************************/
+	/***         MODIFIERS        ***/
+	/********************************/
+	ft_map_insert();
+	ft_map_erase();
+}
+
 
 int main(void) {
 	
-	ft_vector();
-	ft_stack();
-	// ft_map();
+	// ft_vector();
+	// ft_stack();
+	ft_map();
 	
 	// while (1) {}
 	return 0;
