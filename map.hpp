@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/10 00:23:28 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/12 11:56:23 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,31 +39,31 @@ class map {
 			ValueCompare(const Compare &comp = Compare()) : comp_(comp)
 				{ return; }
 
-			bool	operator()(const Key &x, const Key &y) const
-				{ return comp_(x, y); }
+			bool	operator()(const ft::pair<const Key, T> &x, const ft::pair<const Key, T> &y) const
+				{ return comp_(x.first, y.first); }
 	
 	};
 
 	public:
 	
-		typedef Key															key_type;
-		typedef T															mapped_type;
-		typedef pair<const key_type, mapped_type>							value_type;
-		typedef Compare														key_compare;
-		typedef map::ValueCompare											value_compare;
-		typedef Alloc														allocator_type;
-		typedef typename allocator_type::reference							reference;
-		typedef typename allocator_type::const_reference					const_reference;
-		typedef typename allocator_type::pointer							pointer;
-		typedef typename allocator_type::const_pointer						const_pointer;
-		typedef	Node<key_type, mapped_type>									node;
-		typedef bi_iterator<node>											iterator;
-		typedef bi_iterator<node, const node*, const node&>					const_iterator;
-		typedef reverse_iterator<const_iterator>							const_reverse_iterator;
-		typedef reverse_iterator<iterator>									reverse_iterator;
-		typedef ptrdiff_t													difference_type;
-		typedef size_t														size_type;
-		typedef Tree<key_type, mapped_type, key_compare, allocator_type>	tree;
+		typedef Key																key_type;
+		typedef T																mapped_type;
+		typedef pair<const key_type, mapped_type>								value_type;
+		typedef Compare															key_compare;
+		typedef map::ValueCompare												value_compare;
+		typedef Alloc															allocator_type;
+		typedef typename allocator_type::reference								reference;
+		typedef typename allocator_type::const_reference						const_reference;
+		typedef typename allocator_type::pointer								pointer;
+		typedef typename allocator_type::const_pointer							const_pointer;
+		typedef	Node<key_type, mapped_type>										node;
+		typedef bi_iterator<node>												iterator;
+		typedef bi_iterator<node, const node*, const node&>						const_iterator;
+		typedef reverse_iterator<const_iterator>								const_reverse_iterator;
+		typedef reverse_iterator<iterator>										reverse_iterator;
+		typedef ptrdiff_t														difference_type;
+		typedef size_t															size_type;
+		typedef Tree<key_type, mapped_type, key_compare, allocator_type>		tree;
 
 	private:
 
@@ -76,17 +76,31 @@ class map {
 
 		map(const key_compare &comp = key_compare(),
 		const allocator_type &alloc = allocator_type()) :
-		comp_(comp), alloc_(alloc), tree_(tree(comp_, alloc_)), size_()
+		comp_(comp), alloc_(alloc), tree_(comp_, alloc_), size_()
 			{ return; }
 
+		// insert here causing issues
+		template <class InputIterator>
+		map(InputIterator first, InputIterator last,
+		const key_compare &comp = key_compare(),
+		const allocator_type &alloc = allocator_type()) :
+		comp_(comp), alloc_(alloc), tree_(comp_, alloc_), size_()
+			{ insert(first, last); }
+
 		map(const map &m)
-			{ tree_ = m.tree_; }
+			{ *this = m; }
 
 		~map(void)
 			{ return; }
 		
 		map	&operator=(const map &m)
-			{ tree_ = m.tree_; return *this; }
+		{
+			comp_ = m.key_comp();
+			alloc_ = m.get_allocator();
+			tree_ = m.tree_;
+			size_ = m.size_;
+			return *this;
+		}
 		
 	/********************************/
 	/***         ITERATORS        ***/
@@ -99,10 +113,10 @@ class map {
 			{ return const_iterator(tree_.min()); }
 		
 		iterator	end(void)
-			{ return iterator(node::endNode()); }
+			{ return (tree_.root() ? iterator(node::endNode()) : begin()); }
 		
 		const_iterator	end(void) const
-			{ return const_iterator(node::endNode()); }
+			{ return (tree_.root() ? const_iterator(node::endNode()) : begin()); }
 
 		reverse_iterator	rbegin(void)
 			{ return reverse_iterator(end()); }
@@ -127,7 +141,7 @@ class map {
 			{ return size_; }
 		
 		size_type	max_size(void) const
-			{ return alloc_.max_size(); }
+			{ return tree_.maxSize(); }
 
 		/********************************/
 		/***      ELEMENT ACCESS      ***/
@@ -140,8 +154,11 @@ class map {
 				return N->mapped();
 			}
 			value_type	newPair = ft::make_pair<const key_type, mapped_type>(k, mapped_type());
-			N = tree_.insertNode(newPair).first.base();
-			return N->mapped();
+			ft::pair<iterator, bool> retPair = tree_.insertNode(newPair);
+			if (retPair.second) {
+				++size_;
+			}
+			return retPair.first->second;
 		}
 
 		/********************************/
@@ -186,26 +203,39 @@ class map {
 		/*** ERASE ***/
 		/* iterator */
 		void	erase(iterator position)
-		{ tree_.deleteNode(position.base()); }
+		{
+			if (tree_.deleteNode(position.base())) {
+				--size_;
+			}
+		}
 
 		/* reference */
 		size_type	erase(const key_type &k)
-			{ return tree_.searchDelete(k, tree_.root(), 0); }
+		{
+			size_type	ret = tree_.searchDelete(k, tree_.root());
+			size_ -= ret;
+			return ret;
+		}
 
 		/* range */
 		void	erase(iterator first, iterator last)
 		{
-			for (; first != last; ++first) {
-				tree_.deleteNode(first.base());
+			while (first != last) {
+				if (tree_.deleteNode((first++).base())) {
+					--size_;
+				}
 			}
 		}
 		
 		/*** SWAP ***/
 		void	swap(map &m)
 		{
-			node	*tmp = tree_.root();
+			node		*tmpRoot = tree_.root();
+			size_type	tmpSize = size();
 			tree_.setRoot(m.root());
-			m.tree_.setRoot(tmp);
+			m.tree_.setRoot(tmpRoot);
+			size_ = m.size();
+			m.size_ = tmpSize;
 		}
 
 		/*** CLEAR ***/
@@ -240,7 +270,7 @@ class map {
 
 		/*** COUNT ***/
 		size_type	count(const key_type &k) const
-			{ return countNodes(k, tree_.root(), 0); }
+			{ return tree_.countNodes(k, tree_.root()); }
 		
 		/*** LOWER BOUND ***/
 		iterator	lower_bound(const key_type &k)
@@ -268,10 +298,17 @@ class map {
 			const_iterator	upper = upper_bound(k);
 			return ft::make_pair<const_iterator, const_iterator>(lower, upper);
 		}
+	
+		/********************************/
+		/***        ALLOCATOR         ***/
+		/********************************/
 
-	/********************************/
-	/***          UTILS           ***/
-	/********************************/
+		allocator_type	get_allocator(void) const
+			{ return alloc_; }
+
+		/********************************/
+		/***          UTILS           ***/
+		/********************************/
 
 		// tmp function for tests
 		node	*root(void) const

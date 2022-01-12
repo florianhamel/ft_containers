@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/10 00:26:09 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/12 00:59:17 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define CASE_6 6
 
 # include <memory>
+# include <iostream>
 
 # include "utility.hpp"
 # include "iterator.hpp"
@@ -45,7 +46,7 @@ class Node {
 	private:
 
 		bool			color_;
-		value_type		*data_;
+		value_type		data_;
 		node			*parent_;
 		node			*left_;
 		node			*right_;
@@ -56,27 +57,28 @@ class Node {
 	public:
 
 		/* Default */
-		Node(void) : color_(RED), data_(), parent_(), left_(), right_()
+		Node(void) :
+		color_(RED), data_(), parent_(), left_(), right_()
 			{ return; }
 
 		/* Copy */
 		Node(const node &N) :
-		color_(N.color_), data_(N.data_), parent_(N.parent_), left_(N.left_), right_(N.right_)
+		color_(RED), data_(N.copyData()), parent_(), left_(), right_()
 			{ return; }
 
 		/* Parameters */
-		Node(value_type *data, node *parent = NULL, node *left = NULL, node *right = NULL) :
-		color_(RED), data_(data), parent_(parent), left_(left), right_(right)
+		Node(value_type data) :
+		color_(RED), data_(data), parent_(), left_(), right_()
 			{ return; }
 
 		~Node(void)
 			{ return; }
 
-		void	base(void) const
-			{ return data_; }
+		node	*base(void) const
+			{ return &data(); }
 
 		node	&operator=(const node &N)
-			{ data_ = N.data_; }
+			{ data_ = N.copyData(); return *this; }
 
 		/* Getters */
 		bool	color(void) const
@@ -122,14 +124,20 @@ class Node {
 			return rightChild()->color();
 		}
 		
-		value_type	&data(void) const
-			{ return *data_; }
+		value_type	copyData(void) const
+			{ return data_; }
+
+		value_type	&data(void)
+			{ return data_; }
+
+		const value_type &constData(void) const
+			{ return data_; }
 
 		const key_type	&key(void) const
-			{ return data_->first; }
+			{ return data_.first; }
 		
-		mapped_type	&mapped(void) const
-			{ return data_->second; }
+		mapped_type	&mapped(void)
+			{ return data_.second; }
 		
 		node	*grandParent(void) const
 		{
@@ -169,10 +177,6 @@ class Node {
 		
 		node	*rightChild(void) const
 			{ return right_; }
-
-		node	*successor(void) const
-		{
-		}
 		
 		/* Checkers */
 		bool	isLeftChild(void) const
@@ -208,7 +212,7 @@ class Node {
 			{ color_ = color; }
 
 		void	setMapped(mapped_type x)
-			{ data_->second = x; }
+			{ data_.second = x; }
 
 		void	setParent(node *N)
 			{ parent_ = N; }
@@ -220,19 +224,14 @@ class Node {
 			{ right_ = N; }
 		
 		/* Operator Overload */
-		template <class _Node>
-		bool	operator==(const _Node &N)
+		bool	operator==(const node &N)
 			{ return (base() == N.base()); }
 		
-		template <class _Node>
-		bool	operator!=(const _Node &N)
+		bool	operator!=(const node &N)
 			{ return !(*this == N); }
 		
-		value_type	&operator*(void) const
+		value_type	&operator*(void)
 			{ return data(); }
-		
-		value_type	*operator->(void) const
-			{ return &(operator*()); }
 
 		node	*next(void) const// ++it
 		{
@@ -308,85 +307,71 @@ class Node {
 
 // Static variables declaration
 template <class Key, class T>
-Node<Key, T>	Node<Key, T>::end_ = Node<Key, T>(NULL);
+Node<Key, T>	Node<Key, T>::end_ = Node<Key, T>();
 
 template <class Key, class T>
-Node<Key, T>	Node<Key, T>::rend_ = Node<Key, T>(NULL);
+Node<Key, T>	Node<Key, T>::rend_ = Node<Key, T>();
 
 template <
 	class Key,
 	class T,
 	class Compare,
 	class PairAlloc,
-	class Alloc = std::allocator<Node<Key, T> >,
 	class Iterator = bi_iterator<Node<Key, T> >
 >
 class Tree {
 
 	private:
 
-		typedef Key										key_type;
-		typedef T										mapped_type;
-		typedef ft::pair<const key_type, mapped_type>	value_type;
-		typedef Compare									key_compare;
-		typedef PairAlloc								pair_allocator_type;
-		typedef Alloc									allocator_type;
-		typedef size_t									size_type;
-		typedef Node<key_type, mapped_type>				node;
-		typedef Iterator								iterator;
+		typedef Key														key_type;
+		typedef T														mapped_type;
+		typedef ft::pair<const key_type, mapped_type>					value_type;
+		typedef Compare													key_compare;
+		typedef Node<key_type, mapped_type>								node;
+		typedef PairAlloc												pair_alloc_type;
+		typedef typename pair_alloc_type::template rebind<node>::other	allocator_type;
+		typedef size_t													size_type;
+		typedef Iterator												iterator;
 
-		pair_allocator_type	pairAlloc_;
-		allocator_type		alloc_;
 		key_compare			comp_;
+		pair_alloc_type		pairAlloc_;
+		allocator_type		alloc_;
 		node				*root_;
 
 	public:
 
+		/* Default */
 		Tree(void) :
-		pairAlloc_(), alloc_(), comp_(), root_()
+		comp_(), pairAlloc_(), alloc_(), root_()
 			{ return; }
 
-		Tree(const key_compare &comp,
-		const pair_allocator_type &pairAlloc,
-		const allocator_type &alloc = allocator_type()) :
-		pairAlloc_(pairAlloc), alloc_(alloc), comp_(comp), root_()
-			{ return; }
-
+		/* Copy */
 		Tree(const Tree &t)
 			{ *this = t; }
+
+		/* Parameters */
+		Tree(const key_compare &comp,
+		const pair_alloc_type &pairAlloc,
+		const allocator_type &alloc = allocator_type()) :
+		comp_(comp), pairAlloc_(pairAlloc), alloc_(alloc), root_()
+			{ return; }
 
 		~Tree(void)
 			{ deleteTree(root()); }	
 
-		node	*root(void) const
-			{ return root_; }
-
-		void	setRoot(node *root)
-			{ root_ = root; }
-
-		void	copyTree(node *src, node *dst)
-		{
-			if (!src) {
-				return;
-			}
-			if (src->leftChild()) {
-				dst->setLeftChild(newNode(src->leftChild()->data()));
-				dst->leftChild()->setParent(dst);
-			}
-			if (src->rightChild()) {
-				dst->setRightChild(newNode(src->rightChild()->data()));
-				dst->rightChild()->setParent(dst);
-			}
-			copyTree(src->leftChild(), dst->leftChild());
-			copyTree(src->rightChild(), dst->rightChild());
-		}
-
+		/* Assignment */
 		Tree	&operator=(const Tree &t)
 		{
 			root_ = newNode(t.root()->data());
 			copyTree(t.root(), root());
 			return *this;
 		}
+		
+		node	*root(void) const
+			{ return root_; }
+
+		void	setRoot(node *root)
+			{ root_ = root; }
 		
 		/********************************/
 		/***          INSERT          ***/
@@ -477,8 +462,10 @@ class Tree {
 			node	*current = root_;
 			while (current != NULL) {
 				if (!comp_(N->key(), current->key()) && !comp_(current->key(), N->key())) {
+					alloc_.destroy(N);
+					alloc_.deallocate(N, 1);
+					retPair.first = iterator(current);
 					retPair.second = false;
-					current->setMapped(val.second);
 					return retPair;
 				}
 				if (comp_(N->key(), current->key())) {
@@ -587,16 +574,59 @@ class Tree {
 			}
 		}
 
-		void	deleteNode(node *N)
+		node	*replaceNode(node *N, node *replace)
+		{
+			bool	isLeft = N->isLeftChild();
+			node	*parent = N->parent();
+			node	*left = N->leftChild();
+			node	*right = N->rightChild();
+			alloc_.destroy(N);
+			node	*newN = newNode(replace->copyData());
+			if (parent) {
+				if (isLeft) {
+					parent->setLeftChild(newN);
+				}
+				else {
+					parent->setRightChild(newN);
+				}
+			}
+			if (left) {
+				left->setParent(newN);
+			}
+			if (right) {
+				right->setParent(newN);
+			}
+			newN->setParent(parent);
+			newN->setLeftChild(left);
+			newN->setRightChild(right);
+			return newN;
+		}
+
+		size_type countNodes(const key_type &k, node *current) const
+		{
+			size_type	count = 0;
+			if (current == NULL) {
+				return count;
+			}
+			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
+				++count;
+			}
+			return (count + countNodes(k, current->leftChild()) +
+			countNodes(k, current->rightChild()));
+		}
+
+		bool	deleteNode(node *N)
 		{
 			node	*replace = NULL;
 			bool	doubleBlack = false;
+			bool	ret = false;
 			if (N->isLeaf()) {
 				if (!checkRedCase(N)) {
 					fixDoubleBlack(N);
 				}
 				deleteLeaf(N);
 				updateEndNodes();
+				return true;
 			}
 			else if (N->leftChild() == NULL || N->rightChild() == NULL) {
 				if (!checkRedCase(N)) {
@@ -607,38 +637,30 @@ class Tree {
 					fixDoubleBlack(N);
 				}
 				updateEndNodes();
+				return true;
 			}
 			else {
 				replace = inOrderPredecessor(N);
 				pairAlloc_.destroy(&N->data());
-				pairAlloc_.construct(&N->data(), value_type(replace->data()));
-				deleteNode(replace);
+				pairAlloc_.construct(&N->data(), replace->copyData());
+				ret = deleteNode(replace);
 			}
+			return ret;
 		}
 
-		size_type countNodes(const key_type &k, node *current, int count)
+		size_type searchDelete(const key_type &k, node *current)
 		{
+			size_type	count = 0;
 			if (current == NULL) {
-				return count;
-			}
-			if (current->key() == k) {
-				return count + 1;
-			}
-			return (searchDelete(k, current->leftChild(), count) +
-			searchDelete(k, current->rightChild(), count));
-		}
-
-		size_type searchDelete(const key_type &k, node *current, int count)
-		{
-			if (current == NULL) {
-				return count;
+				return 0;
 			}
 			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
-				deleteNode(current);
-				return count + 1;
+				if (deleteNode(current)) {
+					return ++count;
+				}
 			}
-			return (searchDelete(k, current->leftChild(), count) +
-			searchDelete(k, current->rightChild(), count));
+			return (searchDelete(k, current->leftChild()) +
+			searchDelete(k, current->rightChild()));
 		}
 
 		/********************************/
@@ -648,11 +670,12 @@ class Tree {
 		node	*newNode(const value_type &val)
 		{
 			node	*newN = alloc_.allocate(1, 0);
-			value_type	*newPair = pairAlloc_.allocate(1, 0);
-			pairAlloc_.construct(newPair, ft::pair<const key_type, mapped_type>(val));
-			alloc_.construct(newN, node(newPair));
+			alloc_.construct(newN, val);
 			return newN;
 		}
+
+		size_type	maxSize(void) const
+			{ return alloc_.max_size(); }
 
 		node	*rotateLeft(node *N)
 		{
@@ -662,10 +685,12 @@ class Tree {
 			if (rightChild == NULL) {
 				return NULL;
 			}
-			if (!N->isRoot() && N->data() < parent->data()) {
+			if (!N->isRoot() && comp_(N->key(), parent->key())) {
+			// if (!N->isRoot() && N->data() < parent->data()) {}
 				parent->setLeftChild(rightChild);
 			}
-			else if (!N->isRoot() && N->data() > parent->data()) {
+			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
+			// else if (!N->isRoot() && N->data() > parent->data()) {
 				parent->setRightChild(rightChild);
 			}
 			if (N->isRoot()) {
@@ -689,10 +714,12 @@ class Tree {
 			if (leftChild == NULL) {
 				return NULL;
 			}
-			if (!N->isRoot() && N->data() < parent->data()) {
+			if (!N->isRoot() && comp_(N->key(), parent->key())) {
+			// if (!N->isRoot() && N->data() < parent->data()) {
 				parent->setLeftChild(leftChild);
 			}
-			else if (!N->isRoot() && N->data() > parent->data()) {
+			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
+			// else if (!N->isRoot() && N->data() > parent->data()) {
 				parent->setRightChild(leftChild);
 			}
 			if (N->isRoot()) {
@@ -713,7 +740,7 @@ class Tree {
 			if (!current) {
 				return NULL;
 			}
-			if (current->key() == k) {
+			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
 				return current;
 			}
 			node	*ret = search(k, current->leftChild());
@@ -747,7 +774,7 @@ class Tree {
 			node::setRendRight(min());
 		}
 
-		node	*lowerBoundNode(const key_type &k, node *current)
+		node	*lowerBoundNode(const key_type &k, node *current) const
 		{
 			if (!current) {
 				return NULL;
@@ -778,13 +805,16 @@ class Tree {
 					}
 				}
 			}
+			else if (current->isRoot() && !best) {
+				return node::endNode();
+			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
 			}
 			return best;
 		}
 
-		node	*upperBoundNode(const key_type &k, node *current)
+		node	*upperBoundNode(const key_type &k, node *current) const
 		{
 			node	*left = NULL;
 			node	*right = NULL;
@@ -817,6 +847,9 @@ class Tree {
 						best = comp_(best->key(), current->key()) ? best : current;
 					}
 				}
+			}
+			else if (current->isRoot() && !best) {
+				return node::endNode();
 			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
@@ -865,8 +898,6 @@ class Tree {
 			else if (!N->isRoot()) {
 				N->parent()->setRightChild(NULL);
 			}
-			pairAlloc_.destroy(&N->data());
-			pairAlloc_.deallocate(&N->data(), 1);
 			alloc_.destroy(N);
 			alloc_.deallocate(N, 1);
 		}
@@ -902,11 +933,26 @@ class Tree {
 					N->parent()->setRightChild(N->leftChild());
 				}
 			}
-			pairAlloc_.destroy(&N->data());
-			pairAlloc_.deallocate(&N->data(), 1);
 			alloc_.destroy(N);
 			alloc_.deallocate(N, 1);
 			return replace;
+		}
+
+		void	copyTree(node *src, node *dst)
+		{
+			if (!src) {
+				return;
+			}
+			if (src->leftChild()) {
+				dst->setLeftChild(newNode(src->leftChild()->data()));
+				dst->leftChild()->setParent(dst);
+			}
+			if (src->rightChild()) {
+				dst->setRightChild(newNode(src->rightChild()->data()));
+				dst->rightChild()->setParent(dst);
+			}
+			copyTree(src->leftChild(), dst->leftChild());
+			copyTree(src->rightChild(), dst->rightChild());
 		}
 
 		void	deleteTree(node *current)
@@ -916,11 +962,9 @@ class Tree {
 			}
 			deleteTree(current->leftChild());
 			deleteTree(current->rightChild());
-			pairAlloc_.destroy(&current->data());
-			pairAlloc_.deallocate(&current->data(), 1);
 			alloc_.destroy(current);
 			alloc_.deallocate(current, 1);
-		} 
+		}
 
 };
 
