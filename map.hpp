@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/12 11:56:23 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/13 22:19:34 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <functional>
 # include <memory>
 
+# include "algorithm.hpp"
 # include "utility.hpp"
 # include "iterator.hpp"
 # include "tree.hpp"
@@ -85,20 +86,23 @@ class map {
 		const key_compare &comp = key_compare(),
 		const allocator_type &alloc = allocator_type()) :
 		comp_(comp), alloc_(alloc), tree_(comp_, alloc_), size_()
-			{ insert(first, last); }
+		{
+			for (; first != last; ++first)  {
+				insert(first.operator*());
+			}
+		}
 
-		map(const map &m)
-			{ *this = m; }
+		map(const map &mp) :
+		comp_(mp.key_comp()), alloc_(mp.get_allocator())
+			{ *this = mp; }
 
 		~map(void)
 			{ return; }
 		
-		map	&operator=(const map &m)
+		map	&operator=(const map &mp)
 		{
-			comp_ = m.key_comp();
-			alloc_ = m.get_allocator();
-			tree_ = m.tree_;
-			size_ = m.size_;
+			tree_ = mp.tree_;
+			size_ = mp.size();
 			return *this;
 		}
 		
@@ -107,16 +111,16 @@ class map {
 	/********************************/
 
 		iterator	begin(void)
-			{ return iterator(tree_.min()); }
+			{ return size_ ? iterator(tree_.minNode()) : iterator(NULL); }
 
 		const_iterator	begin(void) const
-			{ return const_iterator(tree_.min()); }
+			{ return size_ ? const_iterator(tree_.minNode()) : const_iterator(NULL); }
 		
 		iterator	end(void)
-			{ return (tree_.root() ? iterator(node::endNode()) : begin()); }
+			{ return size_ ? iterator(tree_.endNode()) : iterator(NULL); }
 		
 		const_iterator	end(void) const
-			{ return (tree_.root() ? const_iterator(node::endNode()) : begin()); }
+			{ return size_ ? const_iterator(tree_.endNode()) : const_iterator(NULL); }
 
 		reverse_iterator	rbegin(void)
 			{ return reverse_iterator(end()); }
@@ -149,7 +153,7 @@ class map {
 
 		mapped_type	&operator[](const key_type &k)
 		{
-			node	*N = tree_.search(k, tree_.root());
+			node	*N = tree_.searchNode(k, tree_.root());
 			if (N) {
 				return N->mapped();
 			}
@@ -204,7 +208,7 @@ class map {
 		/* iterator */
 		void	erase(iterator position)
 		{
-			if (tree_.deleteNode(position.base())) {
+			if (tree_.setDelete(position.base())) {
 				--size_;
 			}
 		}
@@ -212,7 +216,7 @@ class map {
 		/* reference */
 		size_type	erase(const key_type &k)
 		{
-			size_type	ret = tree_.searchDelete(k, tree_.root());
+			size_type	ret = tree_.searchDelete(k);
 			size_ -= ret;
 			return ret;
 		}
@@ -221,7 +225,7 @@ class map {
 		void	erase(iterator first, iterator last)
 		{
 			while (first != last) {
-				if (tree_.deleteNode((first++).base())) {
+				if (tree_.setDelete((first++).base())) {
 					--size_;
 				}
 			}
@@ -230,10 +234,8 @@ class map {
 		/*** SWAP ***/
 		void	swap(map &m)
 		{
-			node		*tmpRoot = tree_.root();
-			size_type	tmpSize = size();
-			tree_.setRoot(m.root());
-			m.tree_.setRoot(tmpRoot);
+			size_type	tmpSize = size_;
+			tree_.swapTreeData(m.tree_);
 			size_ = m.size();
 			m.size_ = tmpSize;
 		}
@@ -241,9 +243,14 @@ class map {
 		/*** CLEAR ***/
 		void	clear(void)
 		{
+			if (tree_.minNode()) {
+				tree_.minNode()->setLeftChild(NULL);
+			}
+			if (tree_.maxNode()) {
+				tree_.maxNode()->setRightChild(NULL);
+			}
 			tree_.deleteTree(tree_.root());
 			tree_.setRoot(NULL);
-			tree_.updateEndNodes();
 			size_ = 0;
 		}
 
@@ -263,10 +270,10 @@ class map {
 
 		/*** FIND ***/
 		iterator	find(const key_type &k)
-			{ return iterator(tree_.search(k, tree_.root())); }
+			{ return iterator(tree_.searchNode(k, tree_.root())); }
 
 		const_iterator	find(const key_type &k) const
-			{ return const_iterator(tree_.search(k, tree_.root())); }
+			{ return const_iterator(tree_.searchNode(k, tree_.root())); }
 
 		/*** COUNT ***/
 		size_type	count(const key_type &k) const
@@ -274,16 +281,16 @@ class map {
 		
 		/*** LOWER BOUND ***/
 		iterator	lower_bound(const key_type &k)
-			{ return iterator(tree_.lowerBoundNode(k, tree_.root())); }
+			{ return iterator(tree_.lowerBound(k)); }
 
 		const_iterator	lower_bound(const key_type &k) const
-			{ return const_iterator(tree_.lowerBoundNode(k, tree_.root())); }
+			{ return const_iterator(tree_.lowerBound(k)); }
 
 		iterator	upper_bound(const key_type &k)
-			{ return iterator(tree_.upperBoundNode(k, tree_.root())); }
+			{ return iterator(tree_.upperBound(k)); }
 		
 		const_iterator	upper_bound(const key_type &k) const
-			{ return const_iterator(tree_.upperBoundNode(k, tree_.root())); }
+			{ return const_iterator(tree_.upperBound(k)); }
 
 		pair<iterator, iterator>	equal_range(const key_type &k)
 		{
@@ -315,6 +322,46 @@ class map {
 			{ return tree_.root(); }
 
 };
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator==(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+{
+	if ((lhs.size() != rhs.size()) || !equal(lhs.begin(), lhs.end(), rhs.begin())) {
+		return false;
+	}
+	return true;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator<(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+{
+	if (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) {
+		return true;
+	}
+	return false;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator!=(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+	{ return !(lhs == rhs); }
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator<=(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+	{ return !(lhs > rhs); }
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator>(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+	{ return (rhs < lhs); }
+
+template <class Key, class T, class Compare, class Alloc>
+bool	operator>=(const map<Key, T, Compare, Alloc> &lhs,
+const map<Key, T, Compare, Alloc> &rhs)
+	{ return !(lhs < rhs); }
 
 }
 
