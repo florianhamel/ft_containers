@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/12 00:59:17 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/13 22:00:10 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,62 @@
 
 namespace ft {
 
+// template <class Key, class T>
+// class INode {
+	
+// 	public:
+	
+// 		typedef Key										key_type;
+// 		typedef T										mapped_type;
+// 		typedef ft::pair<const key_type, mapped_type>	value_type;
+	
+// 	public:
+
+// 		virtual INode	*next(void) const = 0;
+// 		virtual INode	*prev(void) const = 0;
+
+// };
+
+// template <class NodeType>
+// class EndNode : INode<typename NodeType::key_type, typename NodeType::mapped_type> {
+	
+// 	typedef NodeType	node;
+	
+// 	private:
+
+// 		node	*left_;
+// 		node	*right_;
+
+// 	public:
+
+// 		EndNode(void) :
+// 		left_(), right_()
+// 			{ return; }
+
+// 		EndNode(const EndNode &endNode) :
+// 		left_(endNode.left()), right_(endNode.right())
+// 			{ return; }
+
+// 		~EndNode(void)
+// 			{ return; }
+
+// 		EndNode	&operator=(const EndNode &endNode)
+// 			{ left_ = endNode.left(); right_ = endNode.right(); }
+
+// 		node	*prev() const
+// 			{ return left_; }
+		
+// 		node	*next() const
+// 			{ return right_; }
+
+// 		void	setLeft(node *N)
+// 			{ left_ = N; }
+
+// 		void	setRight(node *N)
+// 			{ right_ = N; }
+
+// };
+
 template <class Key, class T>
 class Node {
 
@@ -50,9 +106,6 @@ class Node {
 		node			*parent_;
 		node			*left_;
 		node			*right_;
-
-		static node	end_;
-		static node	rend_;
 
 	public:
 
@@ -80,10 +133,69 @@ class Node {
 		node	&operator=(const node &N)
 			{ data_ = N.copyData(); return *this; }
 
-		/* Getters */
+		/********************************/
+		/***         GETTERS          ***/
+		/********************************/
 		bool	color(void) const
 			{ return color_; }
+
+		value_type	&data(void)
+			{ return data_; }
 		
+		value_type	copyData(void) const
+			{ return data_; }
+
+		const value_type &constData(void) const
+			{ return data_; }
+
+		const key_type	&key(void) const
+			{ return data_.first; }
+		
+		mapped_type	&mapped(void)
+			{ return data_.second; }
+		
+		node	*parent(void) const
+			{ return parent_; }
+
+		node	*leftChild(void) const
+			{ return left_; }
+		
+		node	*rightChild(void) const
+			{ return right_; }
+
+		node	*grandParent(void) const
+		{
+			if (parent_ == NULL) {
+				return NULL;
+			}
+			return parent_->parent();
+		}
+
+		node	*uncle(void) const
+		{
+			if (parent() == NULL || grandParent() == NULL) {
+				return NULL;
+			}
+			if (parent()->isLeftChild()) {
+				return grandParent()->rightChild();
+			}
+			return grandParent()->leftChild();
+		}
+
+		node	*sibling(void) const
+		{
+			if (parent() == NULL) {
+				return NULL;
+			}
+			if (isLeftChild()) {
+				return parent()->rightChild();
+			}
+			return parent()->leftChild();
+		}
+
+		/********************************/
+		/***          COLOR           ***/
+		/********************************/
 		bool	parentColor(void) const
 		{
 			if (parent() == NULL) {
@@ -123,62 +235,10 @@ class Node {
 			}
 			return rightChild()->color();
 		}
-		
-		value_type	copyData(void) const
-			{ return data_; }
 
-		value_type	&data(void)
-			{ return data_; }
-
-		const value_type &constData(void) const
-			{ return data_; }
-
-		const key_type	&key(void) const
-			{ return data_.first; }
-		
-		mapped_type	&mapped(void)
-			{ return data_.second; }
-		
-		node	*grandParent(void) const
-		{
-			if (parent_ == NULL) {
-				return NULL;
-			}
-			return parent_->parent();
-		}
-
-		node	*parent(void) const
-			{ return parent_; }
-
-		node	*uncle(void) const
-		{
-			if (parent() == NULL || grandParent() == NULL) {
-				return NULL;
-			}
-			if (parent()->isLeftChild()) {
-				return grandParent()->rightChild();
-			}
-			return grandParent()->leftChild();
-		}
-
-		node	*sibling(void) const
-		{
-			if (parent() == NULL) {
-				return NULL;
-			}
-			if (isLeftChild()) {
-				return parent()->rightChild();
-			}
-			return parent()->leftChild();
-		}
-
-		node	*leftChild(void) const
-			{ return left_; }
-		
-		node	*rightChild(void) const
-			{ return right_; }
-		
-		/* Checkers */
+		/********************************/
+		/***        CHECKERS          ***/
+		/********************************/
 		bool	isLeftChild(void) const
 		{
 			if (parent() == NULL) {
@@ -207,7 +267,10 @@ class Node {
 		bool	isLeaf(void) const
 			{ return (leftChild() == NULL && rightChild() == NULL); }
 
-		/* Setters */
+
+		/********************************/
+		/***         SETTERS          ***/
+		/********************************/
 		void	setColor(bool color)
 			{ color_ = color; }
 
@@ -223,7 +286,10 @@ class Node {
 		void	setRightChild(node *N)
 			{ right_ = N; }
 		
-		/* Operator Overload */
+
+		/********************************/
+		/***    OPERATOR OVERLOAD     ***/
+		/********************************/
 		bool	operator==(const node &N)
 			{ return (base() == N.base()); }
 		
@@ -233,84 +299,53 @@ class Node {
 		value_type	&operator*(void)
 			{ return data(); }
 
-		node	*next(void) const// ++it
+
+		node	*next(void) const
 		{
-			if (this == &node::end_ || this == &node::rend_) {
-				return NULL;
-			}
 			node	*next = rightChild();
 			while (next && next->leftChild()) {
 				next = next->leftChild();
 			}
-			if (!next && parent()) {
+			if (!next && !isRoot()) {
 				next = parent();
 				if (isRightChild()) {
 					while (next->isRightChild()) {
 						next = next->parent();
 					}
 					if (next->isRoot()) {
-						next = node::endNode();
+						next = next->rightChild();
 					}
 					else {
 						next = next->parent();
 					}
 				}
 			}
-			else if (!next && isRoot()) {
-				next = node::endNode();
-			}
 			return next;
 		}
-
-		node	*prev(void) const// --it
+		
+		node	*prev(void) const
 		{
-			if (this == &node::end_ || this == &node::rend_) {
-				return parent();
-			}
 			node	*prev = leftChild();
 			while (prev && prev->rightChild()) {
 				prev = prev->rightChild();
 			}
-			if (!prev && parent()) {
+			if (!prev && !isRoot()) {
 				prev = parent();
 				if (isLeftChild()) {
 					while (prev->isLeftChild()) {
 						prev = prev->parent();
 					}
 					if (prev->isRoot()) {
-						prev = node::endNode();
+						prev = prev->leftChild();
 					}
 					else {
 						prev = prev->parent();
 					}
 				}
 			}
-			else if (!prev && isRoot()) {
-				prev = node::endNode();
-			}
 			return prev;
 		}
-
-		static node	*endNode(void)
-			{ return &node::end_; }
-
-		static node	*rendNode(void)
-			{ return &node::rend_; }
-
-		static void	setEndLeft(node *N)
-			{ node::end_.setParent(N); }
-		
-		static void	setRendRight(node *N)
-			{ node::rend_.setParent(N); }
-
 };
-
-// Static variables declaration
-template <class Key, class T>
-Node<Key, T>	Node<Key, T>::end_ = Node<Key, T>();
-
-template <class Key, class T>
-Node<Key, T>	Node<Key, T>::rend_ = Node<Key, T>();
 
 template <
 	class Key,
@@ -333,17 +368,28 @@ class Tree {
 		typedef size_t													size_type;
 		typedef Iterator												iterator;
 
-		key_compare			comp_;
-		pair_alloc_type		pairAlloc_;
-		allocator_type		alloc_;
-		node				*root_;
+		key_compare		comp_;
+		pair_alloc_type	pairAlloc_;
+		allocator_type	alloc_;
+		
+		node			*root_;
+		node			*min_;
+		node			*max_;
+		node			*end_;
+		node			*rend_;
 
 	public:
 
 		/* Default */
 		Tree(void) :
-		comp_(), pairAlloc_(), alloc_(), root_()
-			{ return; }
+		comp_(), pairAlloc_(), alloc_(),
+		root_(), min_(), max_(), end_(), rend_()
+		{
+			end_ = alloc_.allocate(1, 0);
+			alloc_.construct(end_, node());
+			rend_ = alloc_.allocate(1, 0);
+			alloc_.construct(rend_, node());
+		}
 
 		/* Copy */
 		Tree(const Tree &t)
@@ -353,17 +399,31 @@ class Tree {
 		Tree(const key_compare &comp,
 		const pair_alloc_type &pairAlloc,
 		const allocator_type &alloc = allocator_type()) :
-		comp_(comp), pairAlloc_(pairAlloc), alloc_(alloc), root_()
-			{ return; }
+		comp_(comp), pairAlloc_(pairAlloc), alloc_(alloc),
+		root_(), min_(), max_(), end_(), rend_()
+		{
+			end_ = alloc_.allocate(1, 0);
+			alloc_.construct(end_, node());
+			rend_ = alloc_.allocate(1, 0);
+			alloc_.construct(rend_, node());
+		}
 
 		~Tree(void)
-			{ deleteTree(root()); }	
+		{
+			deleteTree(root());
+			setRoot(NULL);
+		}
 
 		/* Assignment */
 		Tree	&operator=(const Tree &t)
 		{
-			root_ = newNode(t.root()->data());
-			copyTree(t.root(), root());
+			root_ = t.root() ? newNode(t.root()->data()) : NULL;
+			rend_ = newNode(t.rendNode()->data());
+			end_ = newNode(t.endNode()->data());
+			copyTree(t.root(), root(), t.rendNode(), t.endNode());
+			min_ = minFind();
+			max_ = maxFind();
+			updateEndNodes();
 			return *this;
 		}
 		
@@ -372,7 +432,69 @@ class Tree {
 
 		void	setRoot(node *root)
 			{ root_ = root; }
-		
+	
+
+		/********************************/
+		/***        ROTATIONS         ***/
+		/********************************/
+		node	*rotateLeft(node *N)
+		{
+			node 	*parent = N->parent();
+			node	*rightChild = N->rightChild();
+			node	*rightLeftChild = rightChild->leftChild();
+			if (rightChild == NULL) {
+				return NULL;
+			}
+			if (!N->isRoot() && comp_(N->key(), parent->key())) {
+			// if (!N->isRoot() && N->data() < parent->data()) {}
+				parent->setLeftChild(rightChild);
+			}
+			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
+			// else if (!N->isRoot() && N->data() > parent->data()) {
+				parent->setRightChild(rightChild);
+			}
+			if (N->isRoot()) {
+				root_ = rightChild;
+			}
+			rightChild->setParent(parent);
+			rightChild->setLeftChild(N);
+			N->setParent(rightChild);
+			N->setRightChild(rightLeftChild);
+			if (rightLeftChild != NULL) {
+				rightLeftChild->setParent(N);
+			}
+			return rightChild->leftChild();
+		}
+
+		node	*rotateRight(node *N)
+		{
+			node	*parent = N->parent();
+			node	*leftChild = N->leftChild();
+			node	*leftRightChild = leftChild->rightChild();
+			if (leftChild == NULL) {
+				return NULL;
+			}
+			if (!N->isRoot() && comp_(N->key(), parent->key())) {
+			// if (!N->isRoot() && N->data() < parent->data()) {
+				parent->setLeftChild(leftChild);
+			}
+			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
+			// else if (!N->isRoot() && N->data() > parent->data()) {
+				parent->setRightChild(leftChild);
+			}
+			if (N->isRoot()) {
+				root_ = leftChild;
+			}
+			leftChild->setParent(parent);
+			leftChild->setRightChild(N);
+			N->setParent(leftChild);
+			N->setLeftChild(leftRightChild);
+			if (leftRightChild != NULL) {
+				leftRightChild->setParent(N);
+			}
+			return leftChild->rightChild();
+		}
+
 		/********************************/
 		/***          INSERT          ***/
 		/********************************/
@@ -384,7 +506,6 @@ class Tree {
 		/*
 		** Cases 1 -> 3 for left side and 4 -> 6 for symetrical right side
 		*/
-	
 		int		checkInsertViolations(node *N)
 		{
 			if (N->color() == BLACK) {
@@ -459,6 +580,8 @@ class Tree {
 				updateEndNodes();
 				return retPair;
 			}
+			min_->setLeftChild(NULL);
+			max_->setRightChild(NULL);
 			node	*current = root_;
 			while (current != NULL) {
 				if (!comp_(N->key(), current->key()) && !comp_(current->key(), N->key())) {
@@ -466,6 +589,8 @@ class Tree {
 					alloc_.deallocate(N, 1);
 					retPair.first = iterator(current);
 					retPair.second = false;
+					min_->setLeftChild(rend_);
+					max_->setRightChild(end_);
 					return retPair;
 				}
 				if (comp_(N->key(), current->key())) {
@@ -497,6 +622,68 @@ class Tree {
 		/********************************/
 		/***          DELETE          ***/
 		/********************************/
+		bool	checkRedCase(node *N)
+		{
+			if (N->color() == RED) {
+				return true;
+			}
+			if (N->leftChildColor() == RED || N->rightChildColor() == RED) {
+				return true;
+			}
+			return false;
+		}
+
+		void	deleteLeaf(node *N)
+		{
+			if (N->isRoot()) {
+				root_ = NULL;
+			}
+			else if (!N->isRoot() && N->isLeftChild()) {
+				N->parent()->setLeftChild(NULL); 
+			}
+			else if (!N->isRoot()) {
+				N->parent()->setRightChild(NULL);
+			}
+			alloc_.destroy(N);
+			alloc_.deallocate(N, 1);
+		}
+
+		node	*deleteReplace(node *N)
+		{
+			node	*replace = NULL;
+			if (N->leftChild() == NULL) {
+				replace = N->rightChild();
+				if (N->isRoot()) {
+					root_ = N->rightChild();
+				}
+				N->rightChild()->setColor(BLACK);
+				N->rightChild()->setParent(N->parent());
+				if (N->isLeftChild()) {
+					N->parent()->setLeftChild(N->rightChild());
+				}
+				else if (N->isRightChild()) {
+					N->parent()->setRightChild(N->rightChild());
+				}
+			}
+			else {
+				replace = N->leftChild();
+				if (N->isRoot()) {
+					root_ = N->leftChild();
+				}
+				N->leftChild()->setColor(BLACK);
+				N->leftChild()->setParent(N->parent());
+				if (!N->isRoot() && N->isLeftChild()) {
+					N->parent()->setLeftChild(N->leftChild());
+				}
+				else if (!N->isRoot()) {
+					N->parent()->setRightChild(N->leftChild());
+				}
+			}
+			alloc_.destroy(N);
+			alloc_.deallocate(N, 1);
+			return replace;
+		}
+
 		void	fixDoubleBlack(node *N)
 		{
 			while (N) {
@@ -574,47 +761,6 @@ class Tree {
 			}
 		}
 
-		node	*replaceNode(node *N, node *replace)
-		{
-			bool	isLeft = N->isLeftChild();
-			node	*parent = N->parent();
-			node	*left = N->leftChild();
-			node	*right = N->rightChild();
-			alloc_.destroy(N);
-			node	*newN = newNode(replace->copyData());
-			if (parent) {
-				if (isLeft) {
-					parent->setLeftChild(newN);
-				}
-				else {
-					parent->setRightChild(newN);
-				}
-			}
-			if (left) {
-				left->setParent(newN);
-			}
-			if (right) {
-				right->setParent(newN);
-			}
-			newN->setParent(parent);
-			newN->setLeftChild(left);
-			newN->setRightChild(right);
-			return newN;
-		}
-
-		size_type countNodes(const key_type &k, node *current) const
-		{
-			size_type	count = 0;
-			if (current == NULL) {
-				return count;
-			}
-			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
-				++count;
-			}
-			return (count + countNodes(k, current->leftChild()) +
-			countNodes(k, current->rightChild()));
-		}
-
 		bool	deleteNode(node *N)
 		{
 			node	*replace = NULL;
@@ -625,7 +771,6 @@ class Tree {
 					fixDoubleBlack(N);
 				}
 				deleteLeaf(N);
-				updateEndNodes();
 				return true;
 			}
 			else if (N->leftChild() == NULL || N->rightChild() == NULL) {
@@ -636,7 +781,6 @@ class Tree {
 				if (doubleBlack) {
 					fixDoubleBlack(N);
 				}
-				updateEndNodes();
 				return true;
 			}
 			else {
@@ -648,7 +792,7 @@ class Tree {
 			return ret;
 		}
 
-		size_type searchDelete(const key_type &k, node *current)
+		size_type	searchDeleteNode(const key_type &k, node *current)
 		{
 			size_type	count = 0;
 			if (current == NULL) {
@@ -659,124 +803,38 @@ class Tree {
 					return ++count;
 				}
 			}
-			return (searchDelete(k, current->leftChild()) +
-			searchDelete(k, current->rightChild()));
+			return (searchDeleteNode(k, current->leftChild()) +
+			searchDeleteNode(k, current->rightChild()));
+		}
+
+		bool	setDelete(node *N)
+		{
+			if (min_ && max_) {
+				min_->setLeftChild(NULL);
+				max_->setRightChild(NULL);
+			}
+			bool ret = deleteNode(N);
+			updateEndNodes();
+			return ret;
+		}
+
+		size_type	searchDelete(const key_type &k)
+		{
+			if (min_ && max_) {
+				min_->setLeftChild(NULL);
+				max_->setRightChild(NULL);
+			}
+			size_type ret = searchDeleteNode(k, root());
+			updateEndNodes();
+			return ret;
 		}
 
 		/********************************/
-		/***           UTILS          ***/
+		/***          BOUNDS          ***/
 		/********************************/
-
-		node	*newNode(const value_type &val)
-		{
-			node	*newN = alloc_.allocate(1, 0);
-			alloc_.construct(newN, val);
-			return newN;
-		}
-
-		size_type	maxSize(void) const
-			{ return alloc_.max_size(); }
-
-		node	*rotateLeft(node *N)
-		{
-			node 	*parent = N->parent();
-			node	*rightChild = N->rightChild();
-			node	*rightLeftChild = rightChild->leftChild();
-			if (rightChild == NULL) {
-				return NULL;
-			}
-			if (!N->isRoot() && comp_(N->key(), parent->key())) {
-			// if (!N->isRoot() && N->data() < parent->data()) {}
-				parent->setLeftChild(rightChild);
-			}
-			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
-			// else if (!N->isRoot() && N->data() > parent->data()) {
-				parent->setRightChild(rightChild);
-			}
-			if (N->isRoot()) {
-				root_ = rightChild;
-			}
-			rightChild->setParent(parent);
-			rightChild->setLeftChild(N);
-			N->setParent(rightChild);
-			N->setRightChild(rightLeftChild);
-			if (rightLeftChild != NULL) {
-				rightLeftChild->setParent(N);
-			}
-			return rightChild->leftChild();
-		}
-
-		node	*rotateRight(node *N)
-		{
-			node	*parent = N->parent();
-			node	*leftChild = N->leftChild();
-			node	*leftRightChild = leftChild->rightChild();
-			if (leftChild == NULL) {
-				return NULL;
-			}
-			if (!N->isRoot() && comp_(N->key(), parent->key())) {
-			// if (!N->isRoot() && N->data() < parent->data()) {
-				parent->setLeftChild(leftChild);
-			}
-			else if (!N->isRoot() && comp_(parent->key(), N->key())) {
-			// else if (!N->isRoot() && N->data() > parent->data()) {
-				parent->setRightChild(leftChild);
-			}
-			if (N->isRoot()) {
-				root_ = leftChild;
-			}
-			leftChild->setParent(parent);
-			leftChild->setRightChild(N);
-			N->setParent(leftChild);
-			N->setLeftChild(leftRightChild);
-			if (leftRightChild != NULL) {
-				leftRightChild->setParent(N);
-			}
-			return leftChild->rightChild();
-		}
-
-		node	*search(const key_type &k, node *current) const
-		{
-			if (!current) {
-				return NULL;
-			}
-			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
-				return current;
-			}
-			node	*ret = search(k, current->leftChild());
-			if (ret) {
-				return ret;
-			}
-			return search(k, current->rightChild());
-		}
-
-		node	*max(void) const
-		{
-			node	*current = root_;
-			while (current && current->rightChild()) {
-				current = current->rightChild();
-			}
-			return current;
-		}
-
-		node	*min(void) const
-		{
-			node	*current = root_;
-			while (current && current->leftChild()) {
-				current = current->leftChild();
-			}
-			return current;
-		}
-
-		void	updateEndNodes(void)
-		{
-			node::setEndLeft(max());
-			node::setRendRight(min());
-		}
-
 		node	*lowerBoundNode(const key_type &k, node *current) const
 		{
-			if (!current) {
+			if (!current || current == rendNode() || current == endNode()) {
 				return NULL;
 			}
 			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
@@ -805,8 +863,8 @@ class Tree {
 					}
 				}
 			}
-			else if (current->isRoot() && !best) {
-				return node::endNode();
+			else if (current->isRoot()) {
+				return NULL;
 			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
@@ -814,12 +872,18 @@ class Tree {
 			return best;
 		}
 
+		node	*lowerBound(const key_type &k) const
+		{
+			node *ret = lowerBoundNode(k, root());
+			return (ret ? ret : endNode());
+		}
+
 		node	*upperBoundNode(const key_type &k, node *current) const
 		{
 			node	*left = NULL;
 			node	*right = NULL;
 			node	*best = NULL;
-			if (!current) {
+			if (!current || current == rendNode() || current == endNode()) {
 				return NULL;
 			}
 			if (!comp_(current->key(), k)) {
@@ -848,13 +912,102 @@ class Tree {
 					}
 				}
 			}
-			else if (current->isRoot() && !best) {
-				return node::endNode();
+			else if (current->isRoot()) {
+				return NULL;
 			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
 			}
 			return best;
+		}
+
+		node	*upperBound(const key_type &k) const
+		{
+			node *ret = upperBoundNode(k, root());
+			return (ret ? ret : endNode());
+		}
+
+		/********************************/
+		/***           UTILS          ***/
+		/********************************/
+		node	*newNode(const value_type &val)
+		{
+			node	*newN = alloc_.allocate(1, 0);
+			alloc_.construct(newN, val);
+			return newN;
+		}
+
+		size_type	maxSize(void) const
+			{ return alloc_.max_size(); }
+
+		size_type countNodes(const key_type &k, node *current) const
+		{
+			size_type	count = 0;
+			if (!current || current == rendNode() || current == endNode()) {
+				return count;
+			}
+			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
+				++count;
+			}
+			return (count + countNodes(k, current->leftChild()) +
+			countNodes(k, current->rightChild()));
+		}
+
+		node	*searchNode(const key_type &k, node *current) const
+		{
+			if (!current || current == rendNode() || current == endNode()) {
+				return NULL;
+			}
+			if (!comp_(k, current->key()) && !comp_(current->key(), k)) {
+				return current;
+			}
+			node	*ret = searchNode(k, current->leftChild());
+			if (ret) {
+				return ret;
+			}
+			return searchNode(k, current->rightChild());
+		}
+
+		node	*endNode(void) const
+			{ return end_; }
+
+		node	*rendNode(void) const
+			{ return rend_; }
+		
+		node	*minNode(void) const
+			{ return min_; }
+		
+		node	*maxNode(void) const
+			{ return max_; }
+
+		void	updateEndNodes(void)
+		{
+			min_ = minFind();
+			max_ = maxFind();
+			if (min_ && max_) {
+				min_->setLeftChild(rend_);
+				max_->setRightChild(end_);
+			}
+			rend_->setParent(min_);
+			end_->setParent(max_);
+		}
+
+		node	*minFind(void) const
+		{
+			node	*current = root_;
+			while (current && current->leftChild()) {
+				current = current->leftChild();
+			}
+			return current;
+		}
+
+		node	*maxFind(void) const
+		{
+			node	*current = root_;
+			while (current && current->rightChild()) {
+				current = current->rightChild();
+			}
+			return current;
 		}
 
 		node	*inOrderPredecessor(node *N) const
@@ -875,84 +1028,42 @@ class Tree {
 			return succe;
 		}
 
-		/* delete utils */
-		bool	checkRedCase(node *N)
+		void	swapTreeData(Tree &t)
 		{
-			if (N->color() == RED) {
-				return true;
-			}
-			if (N->leftChildColor() == RED || N->rightChildColor() == RED) {
-				return true;
-			}
-			return false;
+			node		*tmpRoot = root();
+			node		*tmpMin = minNode();
+			node		*tmpMax = maxNode();
+			node		*tmpRend = rendNode();
+			node		*tmpEnd = endNode();
+
+			root_ = t.root();
+			min_ = t.minNode();
+			max_ = t.maxNode();
+			rend_ = t.rendNode();
+			end_ = t.endNode();
+
+			t.root_ = tmpRoot;
+			t.min_ = tmpMin;
+			t.max_ = tmpMax;
+			t.rend_ = tmpRend;
+			t.end_ = tmpEnd;
 		}
 
-		void	deleteLeaf(node *N)
+		void	copyTree(node *src, node *dst, node *rend, node *end)
 		{
-			if (N->isRoot()) {
-				root_ = NULL;
-			}
-			else if (!N->isRoot() && N->isLeftChild()) {
-				N->parent()->setLeftChild(NULL); 
-			}
-			else if (!N->isRoot()) {
-				N->parent()->setRightChild(NULL);
-			}
-			alloc_.destroy(N);
-			alloc_.deallocate(N, 1);
-		}
-
-		node	*deleteReplace(node *N)
-		{
-			node	*replace = NULL;
-			if (N->leftChild() == NULL) {
-				replace = N->rightChild();
-				if (N->isRoot()) {
-					root_ = N->rightChild();
-				}
-				N->rightChild()->setColor(BLACK);
-				N->rightChild()->setParent(N->parent());
-				if (N->isLeftChild()) {
-					N->parent()->setLeftChild(N->rightChild());
-				}
-				else if (N->isRightChild()) {
-					N->parent()->setRightChild(N->rightChild());
-				}
-			}
-			else {
-				replace = N->leftChild();
-				if (N->isRoot()) {
-					root_ = N->leftChild();
-				}
-				N->leftChild()->setColor(BLACK);
-				N->leftChild()->setParent(N->parent());
-				if (!N->isRoot() && N->isLeftChild()) {
-					N->parent()->setLeftChild(N->leftChild());
-				}
-				else if (!N->isRoot()) {
-					N->parent()->setRightChild(N->leftChild());
-				}
-			}
-			alloc_.destroy(N);
-			alloc_.deallocate(N, 1);
-			return replace;
-		}
-
-		void	copyTree(node *src, node *dst)
-		{
-			if (!src) {
+			if (!src || src == end || src == rend) {
 				return;
 			}
-			if (src->leftChild()) {
+			if (src->leftChild() && src->leftChild() != rend) {
 				dst->setLeftChild(newNode(src->leftChild()->data()));
 				dst->leftChild()->setParent(dst);
 			}
-			if (src->rightChild()) {
+			if (src->rightChild() && src->rightChild() != end) {
 				dst->setRightChild(newNode(src->rightChild()->data()));
 				dst->rightChild()->setParent(dst);
 			}
-			copyTree(src->leftChild(), dst->leftChild());
-			copyTree(src->rightChild(), dst->rightChild());
+			copyTree(src->leftChild(), dst->leftChild(), rend, end);
+			copyTree(src->rightChild(), dst->rightChild(), rend, end);
 		}
 
 		void	deleteTree(node *current)
