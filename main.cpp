@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/11 17:49:57 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/13 22:52:06 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -975,6 +975,21 @@ void	ft_map_erase()
 	std::cout << std::endl;
 }
 
+void	ft_map_speed()
+{
+	std::vector<ft::pair<int, float> >	vec_;
+	for (int i = 0; i < 10000; ++i) {
+		vec_.push_back(ft::make_pair<int, float>(i, 10000 - i));
+	}
+	ft::map<int, float>	mp(vec_.begin(), vec_.end());
+	for (int i = 5000; i < 10000; ++i) {
+		mp.erase(i);
+	}
+	for (int i = 0; i < 5000; ++i) {
+		mp.erase(i);
+	}
+}
+
 void	ft_map() {
 	ft_fill_vec();
 
@@ -998,13 +1013,14 @@ void	ft_map() {
 	/********************************/
 	ft_map_insert();
 	ft_map_erase();
+	ft_map_speed();
 }
 
 
 int main(void) {
 	
-	// ft_vector();
-	// ft_stack();
+	ft_vector();
+	ft_stack();
 	ft_map();
 	
 	// while (1) {}
