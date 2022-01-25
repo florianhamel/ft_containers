@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/25 16:11:51 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/25 16:40:29 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -982,21 +982,6 @@ void	ft_map_erase()
 	std::cout << std::endl;
 }
 
-void	ft_map_speed()
-{
-	std::vector<ft::pair<int, float> >	vec_;
-	for (int i = 0; i < 10000; ++i) {
-		vec_.push_back(ft::make_pair<int, float>(i, 10000 - i));
-	}
-	ft::map<int, float>	mp(vec_.begin(), vec_.end());
-	for (int i = 5000; i < 10000; ++i) {
-		mp.erase(i);
-	}
-	for (int i = 0; i < 500; ++i) {
-		mp.erase(i);
-	}
-}
-
 void	ft_map_swap_clear()
 {
 	std::cout << "*----- ft_map_swap_clear() -----*" << std::endl;
@@ -1026,6 +1011,11 @@ void	ft_map_swap_clear()
 	mp_.clear();
 	std::cout << mp.size() << std::endl;
 	std::cout << mp_.size() << std::endl;
+	mp[42] = 42;
+	it = mp.begin(); ite = mp.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << std::endl;
+	}
 }
 
 void	ft_map_bounds()
@@ -1055,6 +1045,7 @@ void	ft_map_bounds()
 
 void	ft_map_relational_operators()
 {
+	std::cout << "*----- ft_map_relational_operators() -----*" << std::endl;
 	ft::map<int, int>	mp;
 	ft::map<int, int>	mp_;
 
@@ -1095,6 +1086,8 @@ void	ft_map() {
 	ft_map_erase();
 	ft_map_swap_clear();
 	ft_map_bounds();
+
+	ft_map_relational_operators();
 }
 
 
