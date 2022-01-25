@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/13 22:19:34 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/25 13:26:18 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,6 +243,8 @@ class map {
 		/*** CLEAR ***/
 		void	clear(void)
 		{
+			// Set the min/max left/right child to NULL instead
+			// of end nodes so the delete algorithm doesn't go into them
 			if (tree_.minNode()) {
 				tree_.minNode()->setLeftChild(NULL);
 			}
