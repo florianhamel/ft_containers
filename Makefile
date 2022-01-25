@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/19 21:04:00 by fhamel            #+#    #+#              #
-#    Updated: 2022/01/13 22:47:28 by fhamel           ###   ########.fr        #
+#    Updated: 2022/01/25 16:38:54 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,6 +66,9 @@ compare : $(D_OBJS) $(NAME)
 	diff $(OUTFILE1) $(OUTFILE2)
 
 recompare : re compare
+
+diff :
+	diff $(OUTFILE1) $(OUTFILE2)
 
 clean :
 	rm -rf $(D_OBJS)
