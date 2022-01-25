@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/13 22:52:06 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/25 16:11:51 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@
 #include <deque>
 #include <string>
 #include <map>
+#include <chrono>
+
+/** time **/
+#include <time.h>
+#include <sys/time.h>
+#include <stdlib.h>
+/**********/
 
 #include "vector.hpp"
 #include "stack.hpp"
@@ -985,10 +992,83 @@ void	ft_map_speed()
 	for (int i = 5000; i < 10000; ++i) {
 		mp.erase(i);
 	}
-	for (int i = 0; i < 5000; ++i) {
+	for (int i = 0; i < 500; ++i) {
 		mp.erase(i);
 	}
 }
+
+void	ft_map_swap_clear()
+{
+	std::cout << "*----- ft_map_swap_clear() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+	ft::map<int, int>	mp_;
+
+	mp_[42]; mp_[12]; mp_[34]; mp_[-3];
+
+	iterator	it = mp.begin(), ite = mp.end();
+	iterator	it_ = mp_.begin(), ite_ = mp_.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " " << std::endl;
+	}
+	for(; it_ != ite_; ++it_) {
+		std::cout << it_->first << " " << std::endl;
+	}
+	mp.swap(mp_);
+	it = mp.begin(); ite = mp.end();
+	it_ = mp_.begin(); ite_ = mp_.end();
+	for (; it != ite; ++it) {
+		std::cout << it->first << " " << std::endl;
+	}
+	for(; it_ != ite_; ++it_) {
+		std::cout << it_->first << " " << std::endl;
+	}
+	mp.clear();
+	mp_.clear();
+	std::cout << mp.size() << std::endl;
+	std::cout << mp_.size() << std::endl;
+}
+
+void	ft_map_bounds()
+{
+	std::cout << "*----- ft_map_bounds() -----*" << std::endl;
+	ft::map<int, int>	mp(vec.begin(), vec.end());
+
+	mp[42] = 42;
+
+	std::cout << mp.count(7) << std::endl;
+	if (mp.count(7) > 0) {
+		std::cout << mp.find(7)->first << std::endl;
+	}
+	std::cout << mp.count(-24) << std::endl;
+	if (mp.count(-24) > 0) {
+		std::cout << mp.find(-24)->first << std::endl;
+	}
+	std::cout << mp.lower_bound(7)->first << std::endl;
+	std::cout << mp.lower_bound(11)->first << std::endl;
+	std::cout << mp.upper_bound(7)->first << std::endl;
+	std::cout << mp.upper_bound(11)->first << std::endl;
+	mp.erase(42);
+	ft::pair<iterator, iterator>	pr = mp.equal_range(9);
+	std::cout << (pr.first == mp.end()) << std::endl;
+	std::cout << (pr.second == mp.end()) << std::endl;
+}
+
+void	ft_map_relational_operators()
+{
+	ft::map<int, int>	mp;
+	ft::map<int, int>	mp_;
+
+	mp[21]; mp[42]; mp[36];
+	mp_[21]; mp_[41];
+
+	std::cout << (mp == mp_) << std::endl;
+	std::cout << (mp != mp_) << std::endl;
+	std::cout << (mp < mp_) << std::endl;
+	std::cout << (mp > mp_) << std::endl;
+	std::cout << (mp <= mp_) << std::endl;
+	std::cout << (mp >= mp_) << std::endl;
+}
+
 
 void	ft_map() {
 	ft_fill_vec();
@@ -1013,16 +1093,25 @@ void	ft_map() {
 	/********************************/
 	ft_map_insert();
 	ft_map_erase();
-	ft_map_speed();
+	ft_map_swap_clear();
+	ft_map_bounds();
 }
 
 
 int main(void) {
+	struct timeval start;
+	struct timeval end;
+
+	gettimeofday(&start, NULL);
 	
 	ft_vector();
 	ft_stack();
 	ft_map();
 	
+	gettimeofday(&end, NULL);
+	std::cout << "time for ft:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
 	// while (1) {}
 	return 0;
 }
