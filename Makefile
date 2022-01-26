@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/19 21:04:00 by fhamel            #+#    #+#              #
-#    Updated: 2022/01/26 03:34:39 by fhamel           ###   ########.fr        #
+#    Updated: 2022/01/26 19:07:43 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,10 @@
 NAME		=	containers
 
 NAME_		=	ref_containers
+
+NAME_BONUS	=	set
+
+NAME_BONUS_	=	ref_set
 
 D_OBJS		=	objs/
 
@@ -48,24 +52,29 @@ FSANITIZE	=	-g -fsanitize=address
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-all	: $(D_OBJS) $(NAME)
-
-$(D_OBJS) :
-	@mkdir -p $@
-
-$(D_OBJS)%.o : %.cpp
-	$(CC) $(FLAGS) -c $< -o $@
+all	: $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CC) $(FSANITIZE) $(FLAGS) $(OBJS) -o $(NAME)
-	$(CC) $(FLAGS) $(REFMAIN) -o $(NAME_)
+	$(CC) $(FSANITIZE) $(FLAGS) main.cpp -o $(NAME)
+	$(CC) $(FLAGS) ref_main.cpp -o $(NAME_)
 
-compare : $(D_OBJS) $(NAME)
+compare :
 	./$(NAME) > $(OUTFILE1)
 	./$(NAME_) > $(OUTFILE2)
 	diff $(OUTFILE1) $(OUTFILE2)
 
 recompare : re compare
+
+bonus :
+	$(CC) $(FLAGS) main_bonus.cpp -o $(NAME_BONUS)
+	$(CC) $(FLAGS) ref_main_bonus.cpp -o $(NAME_BONUS_)
+
+compare_bonus : 
+	./$(NAME_BONUS) > $(OUTFILE1)
+	./$(NAME_BONUS_) > $(OUTFILE2)
+	diff $(OUTFILE1) $(OUTFILE2)
+
+recompare_bonus : fclean bonus compare_bonus
 
 diff :
 	diff $(OUTFILE1) $(OUTFILE2)
@@ -76,6 +85,8 @@ clean :
 fclean : clean
 	rm -rf $(NAME)
 	rm -rf $(NAME_)
+	rm -rf $(NAME_BONUS)
+	rm -rf $(NAME_BONUS_)
 	rm -rf $(OUTFILE1) $(OUTFILE2)
 
 re : fclean all
