@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_bonus.hpp                                      :+:      :+:    :+:   */
+/*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 17:09:33 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/25 17:52:38 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 02:23:56 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 
 # include "algorithm.hpp"
 # include "utility.hpp"
-# include "iterator.hpp"
+
+# include "iterator_bonus.hpp"
 # include "tree_bonus.hpp"
 
 namespace ft {
@@ -56,10 +57,10 @@ class set {
 		typedef typename allocator_type::pointer					pointer;
 		typedef typename allocator_type::const_pointer				const_pointer;
 		typedef	NodeSet<T>											node;
-		typedef bi_iterator<node>									iterator;
-		typedef bi_iterator<node, const node*, const node&>			const_iterator;
-		typedef reverse_iterator<const_iterator>					const_reverse_iterator;
-		typedef reverse_iterator<iterator>							reverse_iterator;
+		typedef bi_iterator_set<node>								iterator;
+		typedef bi_iterator_set<node>								const_iterator;
+		typedef reverse_iterator_set<const_iterator>				const_reverse_iterator;
+		typedef reverse_iterator_set<iterator>						reverse_iterator;
 		typedef ptrdiff_t											difference_type;
 		typedef size_t												size_type;
 		typedef TreeSet<value_type, key_compare, allocator_type>	tree;

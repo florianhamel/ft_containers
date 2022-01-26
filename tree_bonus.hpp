@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 17:16:33 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/25 18:10:39 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 03:27:04 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,8 +229,8 @@ class NodeSet {
 		bool	operator!=(const node &N)
 			{ return !(*this == N); }
 		
-		value_type	&operator*(void)
-			{ return data(); }
+		value_type	&operator*(void) const
+			{ return constData(); }
 
 
 		node	*next(void) const
@@ -284,7 +284,7 @@ template <
 	class T,
 	class Compare,
 	class PairAlloc,
-	class Iterator = bi_iterator<NodeSet<T> >
+	class Iterator = bi_iterator_set<NodeSet<T> >
 >
 class TreeSet {
 
@@ -293,7 +293,7 @@ class TreeSet {
 		typedef T														key_type;
 		typedef T														value_type;
 		typedef Compare													key_compare;
-		typedef NodeSet<const value_type>								node;
+		typedef NodeSet<value_type>										node;
 		typedef PairAlloc												pair_alloc_type;
 		typedef typename pair_alloc_type::template rebind<node>::other	allocator_type;
 		typedef size_t													size_type;
@@ -734,8 +734,10 @@ class TreeSet {
 					return ++count;
 				}
 			}
-			return (searchDeleteNode(k, current->leftChild()) +
-			searchDeleteNode(k, current->rightChild()));
+			if (comp_(k, current->key())) {
+				return (searchDeleteNode(k, current->leftChild()));
+			}
+			return (searchDeleteNode(k, current->rightChild()));
 		}
 
 		bool	setDelete(node *N)
@@ -794,9 +796,6 @@ class TreeSet {
 					}
 				}
 			}
-			else if (current->isRoot()) {
-				return NULL;
-			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
 			}
@@ -842,9 +841,6 @@ class TreeSet {
 						best = comp_(best->key(), current->key()) ? best : current;
 					}
 				}
-			}
-			else if (current->isRoot()) {
-				return NULL;
 			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
