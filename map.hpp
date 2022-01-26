@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/25 13:26:18 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 03:15:39 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,10 +153,6 @@ class map {
 
 		mapped_type	&operator[](const key_type &k)
 		{
-			node	*N = tree_.searchNode(k, tree_.root());
-			if (N) {
-				return N->mapped();
-			}
 			value_type	newPair = ft::make_pair<const key_type, mapped_type>(k, mapped_type());
 			ft::pair<iterator, bool> retPair = tree_.insertNode(newPair);
 			if (retPair.second) {

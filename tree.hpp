@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/13 22:00:10 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 03:26:40 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -803,8 +803,10 @@ class Tree {
 					return ++count;
 				}
 			}
-			return (searchDeleteNode(k, current->leftChild()) +
-			searchDeleteNode(k, current->rightChild()));
+			if (comp_(k, current->key())) {
+				return (searchDeleteNode(k, current->leftChild()));
+			}
+			return (searchDeleteNode(k, current->rightChild()));
 		}
 
 		bool	setDelete(node *N)
@@ -863,9 +865,6 @@ class Tree {
 					}
 				}
 			}
-			else if (current->isRoot()) {
-				return NULL;
-			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
 			}
@@ -911,9 +910,6 @@ class Tree {
 						best = comp_(best->key(), current->key()) ? best : current;
 					}
 				}
-			}
-			else if (current->isRoot()) {
-				return NULL;
 			}
 			else {
 				return (comp_(k, current->key()) ? current : NULL);
