@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/25 16:40:39 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 03:30:13 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1060,6 +1060,36 @@ void	ft_map_relational_operators()
 	std::cout << (mp >= mp_) << std::endl;
 }
 
+void	ft_map_speed()
+{
+	std::cout << "*----- ft_map_relational_operators() -----*" << std::endl;
+	struct timeval start;
+	struct timeval end;
+
+	gettimeofday(&start, NULL);
+	std::vector<std::pair<const int, int> >	vec;
+	for (int i = 0; i < 10000; ++i) {
+		vec.push_back(std::pair<const int, int>(i, 10000 - i));
+	}
+	std::map<int, int>	mp;
+	for (int i = 0; i < 3500; ++i) {
+		mp.insert(vec[i]);
+	}
+	for (int i = 7500; i < 10000; ++i) {
+		mp.insert(vec[i]);
+	}
+	for (int i = 3500; i < 7500; ++i) {
+		mp.insert(vec[i]);
+	}
+	gettimeofday(&end, NULL);
+	for (int i = 0; i < 10000; ++i) {
+		mp.erase(i);
+	}
+	std::cout << "map speed test std:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
+}
+
 
 void	ft_map() {
 	ft_fill_vec();
@@ -1088,6 +1118,8 @@ void	ft_map() {
 	ft_map_bounds();
 
 	ft_map_relational_operators();
+
+	ft_map_speed();
 }
 
 
