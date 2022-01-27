@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/26 03:15:39 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/26 18:53:56 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ class map {
 		comp_(comp), alloc_(alloc), tree_(comp_, alloc_), size_()
 			{ return; }
 
-		// insert here causing issues
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last,
 		const key_compare &comp = key_compare(),
@@ -268,10 +267,22 @@ class map {
 
 		/*** FIND ***/
 		iterator	find(const key_type &k)
-			{ return iterator(tree_.searchNode(k, tree_.root())); }
+		{
+			node	*N = tree_.searchNode(k, tree_.root());
+			if (N == NULL) {
+				return end();
+			}
+			return iterator(N);
+		}
 
 		const_iterator	find(const key_type &k) const
-			{ return const_iterator(tree_.searchNode(k, tree_.root())); }
+		{
+			node	*N = tree_.searchNode(k, tree_.root());
+			if (N == NULL) {
+				return end();
+			}
+			return const_iterator(N);
+		}
 
 		/*** COUNT ***/
 		size_type	count(const key_type &k) const
