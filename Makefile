@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/19 21:04:00 by fhamel            #+#    #+#              #
-#    Updated: 2022/01/26 19:07:43 by fhamel           ###   ########.fr        #
+#    Updated: 2022/01/28 00:14:23 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,8 @@ NAME_		=	ref_containers
 NAME_BONUS	=	set
 
 NAME_BONUS_	=	ref_set
+
+NAME_TREE	=	tree
 
 D_OBJS		=	objs/
 
@@ -54,8 +56,8 @@ FSANITIZE	=	-g -fsanitize=address
 
 all	: $(NAME)
 
-$(NAME) : $(OBJS)
-	$(CC) $(FSANITIZE) $(FLAGS) main.cpp -o $(NAME)
+$(NAME) :
+	$(CC) $(FLAGS) main.cpp -o $(NAME)
 	$(CC) $(FLAGS) ref_main.cpp -o $(NAME_)
 
 compare :
@@ -76,6 +78,9 @@ compare_bonus :
 
 recompare_bonus : fclean bonus compare_bonus
 
+tree : 
+	$(CC) $(FLAGS) main_random_bonus.cpp -o $(NAME_TREE)
+
 diff :
 	diff $(OUTFILE1) $(OUTFILE2)
 
@@ -87,6 +92,7 @@ fclean : clean
 	rm -rf $(NAME_)
 	rm -rf $(NAME_BONUS)
 	rm -rf $(NAME_BONUS_)
+	rm -rf $(NAME_TREE)
 	rm -rf $(OUTFILE1) $(OUTFILE2)
 
 re : fclean all
