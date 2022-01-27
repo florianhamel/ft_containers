@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/26 03:29:25 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/01/28 00:06:10 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,14 @@
 #include <deque>
 #include <string>
 #include <map>
-#include <chrono>
 
-/** time **/
 #include <time.h>
 #include <sys/time.h>
 #include <stdlib.h>
-/**********/
 
 #include "vector.hpp"
 #include "stack.hpp"
-
-/* ft::vector */
-/* ft::stack */
-/* ft::map */
+#include "map.hpp"
 
 template < class T >
 void	printVal(T const &val) {
@@ -48,12 +42,6 @@ struct foo {
 	T	var3;
 
 };
-
-// template <class T>
-// class my_input_iter : public ft::base_iterator<std::input_iterator_tag, T> {};
-
-// template <class T>
-// class my_forward_iter: public ft::base_iterator<std::forward_iterator_tag, T> {};
 
 /*----------- VECTOR -----------*/
 
@@ -463,9 +451,7 @@ void	ft_insert_single_elem()
 	std::cout << "capacity: " << vec.capacity() << std::endl;
 
 	ft::vector<int>::iterator it1 = vec.insert(vec.begin() + 1, 21);
-	ft::vector<int>::iterator it2 = vec.insert(vec.begin() + 1, 12);
 	std::cout << "ret it1 insert: " << *it1 << std::endl;
-	std::cout << "ret it2 insert: " << *it2 << std::endl;
 	std::for_each(vec.begin(), vec.end(), printVal<int>); std::cout << std::endl;
 	std::cout << "size: " << vec.size() << std::endl;
 	std::cout << "capacity: " << vec.capacity() << std::endl;
@@ -582,84 +568,66 @@ void	ft_swap()
 	std::for_each(vec2.begin(), vec2.end(), printVal<int>); std::cout << std::endl;
 }
 
+void	ft_speed_test()
+{
+	std::cout << "\n----- ft_speed_test() -----\n" << std::endl;
+	ft::vector<int>	vec(10);
+
+	for (int i = 0; i < 10000; ++i) {
+		vec.insert(vec.end() - 10, i);
+	}
+	for (int i = 0; i < 10000; ++i) {
+		vec.erase(vec.end() - 10);
+	}
+}
+
 void	ft_vector()
 {
 	/********************************/
-	/***        ITERATORS         ***/
+	/***         ITERATORS        ***/
 	/********************************/
-
 	ft_iterator();
 	ft_const_iterator();
 	ft_reverse_iterator();
 	ft_const_reverse_iterator();
 
 	/********************************/
-	/***         CAPACITY         ***/
+	/***          CAPACITY        ***/
 	/********************************/
-
-	/* size */
 	ft_size();
-
-	/* max_size */
 	ft_max_size();
-
-	/* resize */
-	ft_resize();	
-	
-	/* capacity */
+	ft_resize();
 	ft_capacity();
-
-	/* ft_empty */
 	ft_empty();
-
-	/* ft_reserve */
 	ft_reserve();
-	
-	/********************************/
-	/***   RELATIONAL OPERATORS   ***/
-	/********************************/
 
-	ft_relational_operators();
 
 	/********************************/
-	/***      ELEMENT ACCESS      ***/
+	/***     ELEMENT ACCESS       ***/
 	/********************************/
-
-	/* operator[] */
 	ft_operator_at();
 	ft_operator_at_const();
-	
-	/* at */
 	ft_at();
 	ft_at_const();
-
-	/* front */
 	ft_front();
 	ft_front_const();
-
-	/* back */
 	ft_back();
 	ft_back_const();
 
 	/********************************/
 	/***         MODIFIERS        ***/
 	/********************************/
-
-	/* assign */
 	ft_assign_range();
 	ft_assign_fill();
-
-	/* insert */
 	ft_insert_single_elem();
 	ft_insert_fill();
 	ft_insert_range();
-
-	/* erase */
 	ft_erase_single_elem();
 	ft_erase_range();
 
-	/* swap */
 	ft_swap();
+	ft_relational_operators();
+	ft_speed_test();
 }
 
 /*----------- STACK -----------*/
@@ -695,43 +663,12 @@ void	ft_stack()
 
 /*----------- MAP -----------*/
 
-#include "utility.hpp"
-#include "map.hpp"
-
 std::vector<ft::pair<const int, int> >	vec;
 
 typedef	ft::map<int, int>::iterator					iterator;
 typedef	ft::map<int, int>::const_iterator			const_iterator;
 typedef	ft::map<int, int>::reverse_iterator			reverse_iterator;
 typedef	ft::map<int, int>::const_reverse_iterator	const_reverse_iterator;
-
-// template <class Key, class T>
-// void	printTree(ft::Node<Key, T> *current)
-// {
-// 	if (current->parent() == NULL) {
-// 		std::cout << current->key() << std::endl;
-// 	}
-// 	if (current->leftChild() == NULL) {
-// 		std::cout << "NIL" << " ";
-// 	} else {
-// 		std::cout << current->leftChild()->key() << " ";
-// 	}
-
-// 	if (current->rightChild() == NULL) {
-// 		std::cout << "NIL" << " ";
-// 	} else {
-// 		std::cout << current->rightChild()->key() << " ";
-// 	}
-
-// 	std::cout << "\n-----\n";
-// 	if (current->leftChild() != NULL) {
-// 		printTree(current->leftChild());
-// 	}
-// 	if (current->rightChild() != NULL) {
-// 		printTree(current->rightChild());
-// 	}
-// 	return;
-// }
 
 void	ft_fill_vec() {
 	for (int i = 0; i < 10; ++i) {
@@ -1060,13 +997,9 @@ void	ft_map_relational_operators()
 	std::cout << (mp >= mp_) << std::endl;
 }
 
-void	ft_map_speed()
+void	ft_map_speed_test()
 {
-	std::cout << "*----- ft_map_relational_operators() -----*" << std::endl;
-	struct timeval start;
-	struct timeval end;
-
-	gettimeofday(&start, NULL);
+	std::cout << "*----- ft_map_speed_test() -----*" << std::endl;
 	std::vector<ft::pair<const int, int> >	vec;
 	for (int i = 0; i < 10000; ++i) {
 		vec.push_back(ft::pair<const int, int>(i, 10000 - i));
@@ -1081,13 +1014,9 @@ void	ft_map_speed()
 	for (int i = 3500; i < 7500; ++i) {
 		mp.insert(vec[i]);
 	}
-	gettimeofday(&end, NULL);
 	for (int i = 0; i < 10000; ++i) {
 		mp.erase(i);
 	}
-	std::cout << "map speed test ft:: is ";
-	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
-	std::cout << std::endl;
 }
 
 
@@ -1119,7 +1048,7 @@ void	ft_map() {
 
 	ft_map_relational_operators();
 
-	ft_map_speed();
+	ft_map_speed_test();
 }
 
 
@@ -1128,13 +1057,23 @@ int main(void) {
 	struct timeval end;
 
 	gettimeofday(&start, NULL);
-	
 	ft_vector();
-	ft_stack();
-	ft_map();
-	
 	gettimeofday(&end, NULL);
-	std::cout << "time for ft:: is ";
+	std::cout << "VECTOR time in namespace ft:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
+
+	gettimeofday(&start, NULL);
+	ft_stack();
+	gettimeofday(&end, NULL);
+	std::cout << "STACK time in namespace ft:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
+
+	gettimeofday(&start, NULL);
+	ft_map();
+	gettimeofday(&end, NULL);
+	std::cout << "MAP time in namespace ft:: is ";
 	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
 	std::cout << std::endl;
 	// while (1) {}
