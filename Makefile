@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/28 18:43:03 by fhamel            #+#    #+#              #
-#    Updated: 2022/01/31 16:30:57 by pnielly          ###   ########.fr        #
+#    Updated: 2022/02/01 14:41:02 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ SRCS_BONUS	=	$(addprefix $(D_SRCS), $(_SRC_BONUS_))
 
 OBJS		=	$(addprefix $(D_OBJS), $(_SRC_:.cpp=.o))
 
-OBJS_BONUS	=	$(addprefix $(D_OBJS), $(_SRC_BONUS_:.cpp:.o))
+OBJS_BONUS	=	$(addprefix $(D_OBJS), $(_SRC_BONUS_:.cpp=.o))
 
 R			=	\033[0;31m
 G			=	\033[0;32m
@@ -76,19 +76,19 @@ $(D_OBJS)%.o : $(D_SRCS)%.cpp Makefile
 $(NAME) : $(OBJS) Makefile
 	@printf "Compiling objects...\n"
 	@$(CC) $(D_OBJS)main.o -o $(NAME)
-	@printf "[ $(G)$(NAME)$(W) ] Compiled\n"
+	@printf "[ $(G)$(NAME)$(W) ] compiled\n"
 	@$(CC) $(D_OBJS)ref_main.o -o $(NAME_)
-	@printf "[ $(G)$(NAME_)$(W) ] Compiled\n"
+	@printf "[ $(G)$(NAME_)$(W) ] compiled\n"
 
 
 bonus : $(D_OBJS) $(OBJS_BONUS) Makefile
 	@printf "Compiling objects...\n"
 	@$(CC) $(D_OBJS)main_bonus.o -o $(NAME_BONUS)
-	@printf "[ $(G)$(NAME_BONUS)$(W) ] Compiled\n"
-	@$(CC) $(D_OBJS)ref_main_bonus.o $(NAME_BONUS_)
-	@printf "[ $(G)$(NAME_BONUS_)$(W) ] Compiled\n"
-	@$(CC) $(D_OBJS)main_random_bonus.o $(NAME_RAND)
-	@printf "[ $(G)$(NAME_RAND)$(W) ] Compiled\n"
+	@printf "[ $(G)$(NAME_BONUS)$(W) ] compiled\n"
+	@$(CC) $(D_OBJS)ref_main_bonus.o -o $(NAME_BONUS_)
+	@printf "[ $(G)$(NAME_BONUS_)$(W) ] compiled\n"
+	@$(CC) $(D_OBJS)main_random_bonus.o -o $(NAME_RAND)
+	@printf "[ $(G)$(NAME_RAND)$(W) ] compiled\n"
 
 compare : $(NAME)
 	./$(NAME) > ft_file

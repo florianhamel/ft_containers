@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/28 00:02:36 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/01 16:42:35 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,13 +157,16 @@ class vector {
 				throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
 			}
 			else if (n > capacity()) {
-				iterator	oldBegin = begin();
+				iterator	oldBegin = begin(), oldBegin_ = begin();
 				iterator	oldEnd = end();
 				begin_ = end_ = realloc_(n);
 				endCap_ = begin_ + n;
 				for (iterator tmp = begin(); end_ != endCap_ && oldBegin != oldEnd; ++tmp, ++oldBegin) {
 					*tmp = *oldBegin;
 					++end_;
+				}
+				if (oldBegin_.base() != begin_) {
+					alloc_.deallocate(oldBegin_.base(), oldEnd.base() - oldBegin_.base());
 				}
 			}
 		}
