@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/10/19 21:04:00 by fhamel            #+#    #+#              #
-#    Updated: 2022/01/28 00:14:23 by fhamel           ###   ########.fr        #
+#    Created: 2022/01/28 18:43:03 by fhamel            #+#    #+#              #
+#    Updated: 2022/01/31 16:30:57 by pnielly          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,31 +14,41 @@
 #####                              FILES VARS                              #####
 ################################################################################
 
-NAME		=	containers
+NAME		=	ft_containers
 
-NAME_		=	ref_containers
+NAME_		=	ref_ft_containers
 
 NAME_BONUS	=	set
 
 NAME_BONUS_	=	ref_set
 
-NAME_TREE	=	tree
+NAME_RAND	=	tree_random
 
 D_OBJS		=	objs/
 
 D_SRCS		=	srcs/
 
-_SRC_		=	main.cpp
+INCLUDES	=	includes/
 
-REFMAIN		=	ref_main.cpp
+_SRC_		=	main.cpp \
+				ref_main.cpp \
 
-SRCS		=	$(_SRC_)
+_SRC_BONUS_	=	main_bonus.cpp \
+				ref_main_bonus.cpp \
+				main_random_bonus.cpp \
+
+SRCS		=	$(addprefix $(D_SRCS), $(_SRC_))
+
+SRCS_BONUS	=	$(addprefix $(D_SRCS), $(_SRC_BONUS_))
 
 OBJS		=	$(addprefix $(D_OBJS), $(_SRC_:.cpp=.o))
 
-OUTFILE1	=	outfile1.txt
+OBJS_BONUS	=	$(addprefix $(D_OBJS), $(_SRC_BONUS_:.cpp:.o))
 
-OUTFILE2	=	outfile2.txt
+R			=	\033[0;31m
+G			=	\033[0;32m
+B			=	\033[0;34m
+W			=	\033[0m
 
 ################################################################################
 #####                           COMPILER OPTIONS                           #####
@@ -54,45 +64,58 @@ FSANITIZE	=	-g -fsanitize=address
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-all	: $(NAME)
+all	: $(D_OBJS) $(NAME)
 
-$(NAME) :
-	$(CC) $(FLAGS) main.cpp -o $(NAME)
-	$(CC) $(FLAGS) ref_main.cpp -o $(NAME_)
+$(D_OBJS) :
+	@mkdir objs
 
-compare :
-	./$(NAME) > $(OUTFILE1)
-	./$(NAME_) > $(OUTFILE2)
-	diff $(OUTFILE1) $(OUTFILE2)
+$(D_OBJS)%.o : $(D_SRCS)%.cpp Makefile
+	@$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDES)
+	@printf "$(B)$<$(W) linking...\n"
 
-recompare : re compare
+$(NAME) : $(OBJS) Makefile
+	@printf "Compiling objects...\n"
+	@$(CC) $(D_OBJS)main.o -o $(NAME)
+	@printf "[ $(G)$(NAME)$(W) ] Compiled\n"
+	@$(CC) $(D_OBJS)ref_main.o -o $(NAME_)
+	@printf "[ $(G)$(NAME_)$(W) ] Compiled\n"
 
-bonus :
-	$(CC) $(FLAGS) main_bonus.cpp -o $(NAME_BONUS)
-	$(CC) $(FLAGS) ref_main_bonus.cpp -o $(NAME_BONUS_)
 
-compare_bonus : 
-	./$(NAME_BONUS) > $(OUTFILE1)
-	./$(NAME_BONUS_) > $(OUTFILE2)
-	diff $(OUTFILE1) $(OUTFILE2)
+bonus : $(D_OBJS) $(OBJS_BONUS) Makefile
+	@printf "Compiling objects...\n"
+	@$(CC) $(D_OBJS)main_bonus.o -o $(NAME_BONUS)
+	@printf "[ $(G)$(NAME_BONUS)$(W) ] Compiled\n"
+	@$(CC) $(D_OBJS)ref_main_bonus.o $(NAME_BONUS_)
+	@printf "[ $(G)$(NAME_BONUS_)$(W) ] Compiled\n"
+	@$(CC) $(D_OBJS)main_random_bonus.o $(NAME_RAND)
+	@printf "[ $(G)$(NAME_RAND)$(W) ] Compiled\n"
 
-recompare_bonus : fclean bonus compare_bonus
+compare : $(NAME)
+	./$(NAME) > ft_file
+	./$(NAME_) > std_file
+	diff ft_file std_file
 
-tree : 
-	$(CC) $(FLAGS) main_random_bonus.cpp -o $(NAME_TREE)
-
-diff :
-	diff $(OUTFILE1) $(OUTFILE2)
+compare_bonus : bonus
+	./$(NAME_BONUS) > ft_file
+	./$(NAME_BONUS_) > std_file
+	diff ft_file std_file
 
 clean :
-	rm -rf $(D_OBJS)
+	@rm -rf $(D_OBJS)
+	@printf "[ objects ] $(R)removed\n$(W)"
 
 fclean : clean
-	rm -rf $(NAME)
-	rm -rf $(NAME_)
-	rm -rf $(NAME_BONUS)
-	rm -rf $(NAME_BONUS_)
-	rm -rf $(NAME_TREE)
-	rm -rf $(OUTFILE1) $(OUTFILE2)
+	@rm -rf $(NAME)
+	@printf "[ $(NAME) ] $(R)removed\n$(W)"
+	@rm -rf $(NAME_)
+	@printf "[ $(NAME_) ] $(R)removed\n$(W)"
+	@rm -rf $(NAME_BONUS)
+	@printf "[ $(NAME_BONUS) ] $(R)removed\n$(W)"
+	@rm -rf $(NAME_BONUS_)
+	@printf "[ $(NAME_BONUS_) ] $(R)removed\n$(W)"
+	@rm -rf $(NAME_RAND)
+	@printf "[ $(NAME_RAND) ] $(R)removed\n$(W)"
+	@rm -rf ft_file std_file
+	@printf "[ ft_file ] [ std_file ] $(R)removed\n$(W)"
 
 re : fclean all
