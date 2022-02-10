@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/26 03:26:40 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/10 23:50:48 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,62 +32,6 @@
 # include "iterator.hpp"
 
 namespace ft {
-
-// template <class Key, class T>
-// class INode {
-	
-// 	public:
-	
-// 		typedef Key										key_type;
-// 		typedef T										mapped_type;
-// 		typedef ft::pair<const key_type, mapped_type>	value_type;
-	
-// 	public:
-
-// 		virtual INode	*next(void) const = 0;
-// 		virtual INode	*prev(void) const = 0;
-
-// };
-
-// template <class NodeType>
-// class EndNode : INode<typename NodeType::key_type, typename NodeType::mapped_type> {
-	
-// 	typedef NodeType	node;
-	
-// 	private:
-
-// 		node	*left_;
-// 		node	*right_;
-
-// 	public:
-
-// 		EndNode(void) :
-// 		left_(), right_()
-// 			{ return; }
-
-// 		EndNode(const EndNode &endNode) :
-// 		left_(endNode.left()), right_(endNode.right())
-// 			{ return; }
-
-// 		~EndNode(void)
-// 			{ return; }
-
-// 		EndNode	&operator=(const EndNode &endNode)
-// 			{ left_ = endNode.left(); right_ = endNode.right(); }
-
-// 		node	*prev() const
-// 			{ return left_; }
-		
-// 		node	*next() const
-// 			{ return right_; }
-
-// 		void	setLeft(node *N)
-// 			{ left_ = N; }
-
-// 		void	setRight(node *N)
-// 			{ right_ = N; }
-
-// };
 
 template <class Key, class T>
 class Node {
