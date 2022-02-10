@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 01:29:50 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 16:32:03 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/10 23:36:13 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ class stack {
 
 	public:
 
-		stack(const container_type &ctnr = container_type()) : container_(ctnr)
-			{ return; }
+		stack(const container_type &ctnr = container_type())
+			{ container_ = ctnr; }
 
-		stack(const stack &x) : container_(x.container_)
-			{ return; }
+		stack(const stack &x)
+			{ *this = x; }
 
 		~stack(void)
 			{ return; }

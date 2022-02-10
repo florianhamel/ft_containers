@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/01 16:42:35 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/10 23:38:23 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,17 @@ class vector {
 		vector	&operator=(const vector &x)
 		{
 			alloc_ = x.get_allocator();
-			begin_ = end_ = alloc_.allocate(x.capacity(), begin_);
-			endCap_ = begin_ + x.capacity();
-			const_iterator	its = x.begin();
-			for (iterator itd = begin(); end_ != endCap_ && its != x.end(); ++itd, ++its) {
-				*itd = *its;
-				++end_;
+			if (x.capacity() > 0) {
+				begin_ = end_ = alloc_.allocate(x.capacity(), begin_);
+				endCap_ = begin_ + x.capacity();
+				const_iterator	its = x.begin();
+				for (iterator itd = begin(); end_ != endCap_ && its != x.end(); ++itd, ++its) {
+					*itd = *its;
+					++end_;
+				}
+			}
+			else {
+				begin_ = end_ = endCap_ = NULL;
 			}
 			return *this; 
 		}
