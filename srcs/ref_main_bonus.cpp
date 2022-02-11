@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/26 12:43:18 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/26 19:06:53 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:29:02 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,10 @@
 #include <map>
 #include <set>
 
-/** time **/
 #include <time.h>
 #include <sys/time.h>
 #include <stdlib.h>
-/**********/
 
-#include "vector.hpp"
-#include "stack.hpp"
-
-#include "utility.hpp"
 #include "set.hpp"
 
 typedef std::set<int>::iterator					iterator;
@@ -361,10 +355,7 @@ void	ft_set_relational_operators()
 void	ft_set_speed_test()
 {
 	std::cout << "*----- ft_set_speed_test() -----*" << std::endl;
-	struct timeval start;
-	struct timeval end;
 
-	gettimeofday(&start, NULL);
 	std::vector<int>	vec;
 	for (int i = 0; i < 10000; ++i) {
 		vec.push_back(i);
@@ -379,13 +370,9 @@ void	ft_set_speed_test()
 	for (int i = 3500; i < 7500; ++i) {
 		st.insert(vec[i]);
 	}
-	gettimeofday(&end, NULL);
 	for (int i = 0; i < 10000; ++i) {
 		st.erase(i);
 	}
-	std::cout << "set speed test std:: is ";
-	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
-	std::cout << std::endl;
 }
 
 int main(void)
@@ -415,5 +402,6 @@ int main(void)
 	std::cout << "time for std:: is ";
 	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
 	std::cout << std::endl;
+
 	return 0;
 }

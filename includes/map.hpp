@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/01/26 18:53:56 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:38:24 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,9 +251,9 @@ class map {
 			size_ = 0;
 		}
 
-	/********************************/
-	/***        OBSERVERS         ***/
-	/********************************/
+		/********************************/
+		/***        OBSERVERS         ***/
+		/********************************/
 
 		value_compare	value_comp(void) const
 			{ return value_compare(); }
@@ -261,9 +261,9 @@ class map {
 		key_compare	key_comp(void) const
 			{ return comp_; }
 
-	/********************************/
-	/***        OPERATIONS        ***/
-	/********************************/
+		/********************************/
+		/***        OPERATIONS        ***/
+		/********************************/
 
 		/*** FIND ***/
 		iterator	find(const key_type &k)
@@ -326,7 +326,7 @@ class map {
 		/***          UTILS           ***/
 		/********************************/
 
-		// tmp function for tests
+		// function for tests
 		node	*root(void) const
 			{ return tree_.root(); }
 

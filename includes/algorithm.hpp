@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/24 17:11:36 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 01:15:50 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:17:30 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, B
 	}
 	return true;
 }
-
-
 
 /*--- lexicographical_compare()---*/
 /* default */

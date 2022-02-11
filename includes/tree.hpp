@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/10 23:50:48 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:23:49 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,8 +354,16 @@ class Tree {
 
 		~Tree(void)
 		{
-			deleteTree(root());
-			setRoot(NULL);
+			if (!root_) {
+				alloc_.destroy(end_);
+				alloc_.deallocate(end_, 1);
+				alloc_.destroy(rend_);
+				alloc_.deallocate(rend_, 1);
+			}
+			else {
+				deleteTree(root());
+				setRoot(NULL);
+			}
 		}
 
 		/* Assignment */

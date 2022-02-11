@@ -6,14 +6,14 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 17:11:22 by fhamel            #+#    #+#             */
-/*   Updated: 2021/12/26 01:08:27 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:17:23 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPE_TRAITS_HPP
 # define TYPE_TRAITS_HPP
 
-#include <iterator> // std::distance
+# include <iterator> // std::distance
 
 namespace ft {
 

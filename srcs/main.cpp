@@ -6,10 +6,11 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 14:50:38 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/10 23:49:49 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 01:24:22 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <algorithm>
 #include <iostream>
 #include <typeinfo>
 #include <vector>
@@ -659,7 +660,6 @@ void	ft_stack()
 	std::cout << (s1 >= s2) << std::endl;
 	ft::stack<int>	s3(s2);
 	std::cout << (&s2 == &s3) << std::endl;
-	while (1) {}
 }
 
 /*----------- MAP -----------*/
@@ -1036,10 +1036,8 @@ void	ft_map() {
 	/***        CAPACITY          ***/
 	/********************************/
 	ft_map_size_empty();
-	while (1) {}
 	ft_map_max_size();
 	ft_map_at_operator();
-	while (1) {}
 
 	/********************************/
 	/***         MODIFIERS        ***/
@@ -1059,19 +1057,19 @@ int main(void) {
 	struct timeval start;
 	struct timeval end;
 
-	// gettimeofday(&start, NULL);
-	// ft_vector();
-	// gettimeofday(&end, NULL);
-	// std::cout << "VECTOR time in namespace ft:: is ";
-	// std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
-	// std::cout << std::endl;
+	gettimeofday(&start, NULL);
+	ft_vector();
+	gettimeofday(&end, NULL);
+	std::cout << "VECTOR time in namespace ft:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
 
-	// gettimeofday(&start, NULL);
-	// ft_stack();
-	// gettimeofday(&end, NULL);
-	// std::cout << "STACK time in namespace ft:: is ";
-	// std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
-	// std::cout << std::endl;
+	gettimeofday(&start, NULL);
+	ft_stack();
+	gettimeofday(&end, NULL);
+	std::cout << "STACK time in namespace ft:: is ";
+	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
+	std::cout << std::endl;
 
 	gettimeofday(&start, NULL);
 	ft_map();
@@ -1079,5 +1077,6 @@ int main(void) {
 	std::cout << "MAP time in namespace ft:: is ";
 	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
 	std::cout << std::endl;
+
 	return 0;
 }
