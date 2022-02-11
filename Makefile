@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/28 18:43:03 by fhamel            #+#    #+#              #
-#    Updated: 2022/02/11 03:01:45 by fhamel           ###   ########.fr        #
+#    Updated: 2022/02/11 03:38:32 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,10 @@ FSANITIZE	=	-g -fsanitize=address
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-all	: $(NAME)
+all	: $(D_OBJS) $(NAME)
+
+$(D_OBJS) :
+	@mkdir $(D_OBJS)
 
 $(D_OBJS)%.o : $(D_SRCS)%.cpp Makefile
 	@$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDES)
