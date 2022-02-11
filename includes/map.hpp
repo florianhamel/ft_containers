@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 01:38:24 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 02:13:26 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,16 +110,22 @@ class map {
 	/********************************/
 
 		iterator	begin(void)
-			{ return size_ ? iterator(tree_.minNode()) : iterator(NULL); }
+			{ return size_ ? iterator(tree_.minNode()) : end(); }
 
 		const_iterator	begin(void) const
-			{ return size_ ? const_iterator(tree_.minNode()) : const_iterator(NULL); }
+			{ return size_ ? const_iterator(tree_.minNode()) : end(); }
+		
+		// iterator	end(void)
+		// 	{ return size_ ? iterator(tree_.endNode()) : iterator(NULL); }
+		
+		// const_iterator	end(void) const
+		// 	{ return size_ ? const_iterator(tree_.endNode()) : const_iterator(NULL); }
 		
 		iterator	end(void)
-			{ return size_ ? iterator(tree_.endNode()) : iterator(NULL); }
+			{ return iterator(tree_.endNode()); }
 		
 		const_iterator	end(void) const
-			{ return size_ ? const_iterator(tree_.endNode()) : const_iterator(NULL); }
+			{ return const_iterator(tree_.endNode()); }
 
 		reverse_iterator	rbegin(void)
 			{ return reverse_iterator(end()); }
