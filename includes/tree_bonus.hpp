@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 17:16:33 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 01:23:59 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:30:02 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,8 +357,6 @@ class TreeSet {
 		TreeSet	&operator=(const TreeSet &t)
 		{
 			root_ = t.root() ? newNode(t.root()->data()) : NULL;
-			rend_ = newNode(t.rendNode()->data());
-			end_ = newNode(t.endNode()->data());
 			copyTree(t.root(), root(), t.rendNode(), t.endNode());
 			min_ = minFind();
 			max_ = maxFind();
@@ -986,7 +984,7 @@ class TreeSet {
 
 		void	copyTree(node *src, node *dst, node *rend, node *end)
 		{
-			if (!src || src == end || src == rend) {
+			if (!src || src == end || src == rend) { 
 				return;
 			}
 			if (src->leftChild() && src->leftChild() != rend) {

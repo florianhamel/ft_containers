@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 17:09:33 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 01:38:33 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:29:59 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ class set {
 		
 		set	&operator=(const set &st)
 		{
+			clear();
 			tree_ = st.tree_;
 			size_ = st.size();
 			return *this;
@@ -109,16 +110,16 @@ class set {
 	/********************************/
 
 		iterator	begin(void)
-			{ return size_ ? iterator(tree_.minNode()) : iterator(NULL); }
+			{ return size_ ? iterator(tree_.minNode()) : end(); }
 
 		const_iterator	begin(void) const
-			{ return size_ ? const_iterator(tree_.minNode()) : const_iterator(NULL); }
+			{ return size_ ? const_iterator(tree_.minNode()) : end(); }
 		
 		iterator	end(void)
-			{ return size_ ? iterator(tree_.endNode()) : iterator(NULL); }
+			{ return iterator(tree_.endNode()); }
 		
 		const_iterator	end(void) const
-			{ return size_ ? const_iterator(tree_.endNode()) : const_iterator(NULL); }
+			{ return const_iterator(tree_.endNode()); }
 
 		reverse_iterator	rbegin(void)
 			{ return reverse_iterator(end()); }

@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:38:55 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 02:13:26 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:31:06 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ class map {
 		
 		map	&operator=(const map &mp)
 		{
+			clear();
 			tree_ = mp.tree_;
 			size_ = mp.size();
 			return *this;

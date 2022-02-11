@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/26 12:43:18 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 01:28:28 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:30:46 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,6 +243,7 @@ void	ft_set_erase()
 
 void	ft_set_swap_clear()
 {
+	while (1) {}
 	std::cout << "*----- ft_set_swap_clear() -----*" << std::endl;
 	ft::set<int>	st(vec.begin(), vec.end());
 	ft::set<int>	st_;
@@ -399,9 +400,11 @@ int main(void)
 	ft_set_speed_test();
 
 	gettimeofday(&end, NULL);
-	std::cout << "time for ft:: is ";
+	std::cout << "SET time in namespace ft:: is ";
 	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
 	std::cout << std::endl;
+
+	while (1) {}
 
 	return 0;
 }

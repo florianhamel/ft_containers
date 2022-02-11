@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 14:45:56 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 01:23:49 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:16:16 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -370,8 +370,6 @@ class Tree {
 		Tree	&operator=(const Tree &t)
 		{
 			root_ = t.root() ? newNode(t.root()->data()) : NULL;
-			rend_ = newNode(t.rendNode()->data());
-			end_ = newNode(t.endNode()->data());
 			copyTree(t.root(), root(), t.rendNode(), t.endNode());
 			min_ = minFind();
 			max_ = maxFind();
