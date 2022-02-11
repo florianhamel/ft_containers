@@ -6,7 +6,7 @@
 #    By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/28 18:43:03 by fhamel            #+#    #+#              #
-#    Updated: 2022/02/01 14:41:02 by fhamel           ###   ########.fr        #
+#    Updated: 2022/02/11 03:01:45 by fhamel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,18 +32,14 @@ INCLUDES	=	includes/
 
 _SRC_		=	main.cpp \
 				ref_main.cpp \
-
-_SRC_BONUS_	=	main_bonus.cpp \
+				main_bonus.cpp \
 				ref_main_bonus.cpp \
 				main_random_bonus.cpp \
 
 SRCS		=	$(addprefix $(D_SRCS), $(_SRC_))
 
-SRCS_BONUS	=	$(addprefix $(D_SRCS), $(_SRC_BONUS_))
+OBJS		=	$(addprefix $(D_OBJS), $(_SRC_:.cpp=.o))clear
 
-OBJS		=	$(addprefix $(D_OBJS), $(_SRC_:.cpp=.o))
-
-OBJS_BONUS	=	$(addprefix $(D_OBJS), $(_SRC_BONUS_:.cpp=.o))
 
 R			=	\033[0;31m
 G			=	\033[0;32m
@@ -64,44 +60,44 @@ FSANITIZE	=	-g -fsanitize=address
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-all	: $(D_OBJS) $(NAME)
-
-$(D_OBJS) :
-	@mkdir objs
+all	: $(NAME)
 
 $(D_OBJS)%.o : $(D_SRCS)%.cpp Makefile
 	@$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDES)
 	@printf "$(B)$<$(W) linking...\n"
 
-$(NAME) : $(OBJS) Makefile
-	@printf "Compiling objects...\n"
+$(NAME) : $(D_OBJS)main.o Makefile
 	@$(CC) $(D_OBJS)main.o -o $(NAME)
 	@printf "[ $(G)$(NAME)$(W) ] compiled\n"
+
+ref_main : $(D_OBJS)ref_main.o Makefile
 	@$(CC) $(D_OBJS)ref_main.o -o $(NAME_)
 	@printf "[ $(G)$(NAME_)$(W) ] compiled\n"
 
-
-bonus : $(D_OBJS) $(OBJS_BONUS) Makefile
-	@printf "Compiling objects...\n"
+set : $(D_OBJS)main_bonus.o Makefile
 	@$(CC) $(D_OBJS)main_bonus.o -o $(NAME_BONUS)
 	@printf "[ $(G)$(NAME_BONUS)$(W) ] compiled\n"
+
+ref_set : $(D_OBJS)ref_main_bonus.o Makefile
 	@$(CC) $(D_OBJS)ref_main_bonus.o -o $(NAME_BONUS_)
 	@printf "[ $(G)$(NAME_BONUS_)$(W) ] compiled\n"
+
+tree_random : $(D_OBJS)main_random_bonus.o Makefile
 	@$(CC) $(D_OBJS)main_random_bonus.o -o $(NAME_RAND)
 	@printf "[ $(G)$(NAME_RAND)$(W) ] compiled\n"
 
-compare : $(NAME)
+compare :
 	./$(NAME) > ft_file
 	./$(NAME_) > std_file
 	diff ft_file std_file
 
-compare_bonus : bonus
+compare_bonus :
 	./$(NAME_BONUS) > ft_file
 	./$(NAME_BONUS_) > std_file
 	diff ft_file std_file
 
 clean :
-	@rm -rf $(D_OBJS)
+	@rm -rf $(D_OBJS)*.o
 	@printf "[ objects ] $(R)removed\n$(W)"
 
 fclean : clean
