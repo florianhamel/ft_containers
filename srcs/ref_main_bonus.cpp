@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/26 12:43:18 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/11 03:30:25 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/11 03:49:46 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,7 +402,6 @@ int main(void)
 	std::cout << "SET time in namespace std:: is ";
 	std::cout << (end.tv_sec - start.tv_sec) + 1e-6*(end.tv_usec - start.tv_usec);
 	std::cout << std::endl;
-	while (1) {}
 
 	return 0;
 }
