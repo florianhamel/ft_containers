@@ -6,7 +6,7 @@
 /*   By: fhamel <fhamel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 11:49:35 by fhamel            #+#    #+#             */
-/*   Updated: 2022/02/10 23:38:23 by fhamel           ###   ########.fr       */
+/*   Updated: 2022/02/12 13:15:22 by fhamel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <memory>
 # include <stdexcept>
+
+# include <iostream>
 
 # include "iterator.hpp"
 # include "algorithm.hpp"
@@ -246,18 +248,19 @@ class vector {
 				alloc_.destroy(tmp.base());
 			}
 			alloc_.deallocate(begin_, capacity());
-			begin_ = end_ = endCap_ = 0;
+			begin_ = end_ = endCap_ = NULL;
 			insertAlloc_(begin(), first, last);
 		}
 
 		/* fill */
 		void	assign(size_type n, const value_type &val)
 		{
-			for (iterator tmp = begin(); tmp != end(); ++tmp) {
-				alloc_.destroy(tmp.base());
+			iterator	it = begin(), ite = end();
+			for (; it != ite; ++it) {
+				alloc_.destroy(it.base());
 			}
 			alloc_.deallocate(begin_, capacity());
-			begin_ = end_ = endCap_ = 0;
+			begin_ = end_ = endCap_ = NULL;
 			insertAlloc_(begin(), n, val);
 		}
 
@@ -270,15 +273,16 @@ class vector {
 				size_type sizeAlloc = (oldCap > 0) ? oldCap * 2 : 1;
 				pointer newBegin = alloc_.allocate(sizeAlloc, begin_);
 				for (pointer src = begin_, dst = newBegin; src != end_; ++src, ++dst) {
-					*dst = *src;
+					alloc_.construct(dst, *src);
 					alloc_.destroy(src);
 				}
 				alloc_.deallocate(begin_, oldCap);
 				begin_ = newBegin;
+				end_ = begin_ + oldSize;
 				endCap_ = begin_ + sizeAlloc;
 			}
-			end_ = begin_ + oldSize + 1;
-			back() = val;
+			alloc_.construct(end_, val);
+			++end_;
 		}
 
 		/*--- pop_back() ---*/
@@ -408,7 +412,7 @@ class vector {
 		{
 			size_type	oldCap = capacity();
 			size_type	totalCap = oldCap + addCap;
-			size_type	newCap = (totalCap > 2 * oldCap) ? totalCap : 2 * oldCap;
+			size_type	newCap = (totalCap > (2 * oldCap)) ? totalCap : (2 * oldCap);
 			pointer		newBegin = alloc_.allocate(newCap, begin_);
 			endCap_ = newBegin + newCap;
 			return newBegin;
@@ -417,12 +421,9 @@ class vector {
 		iterator	insertAlloc_(iterator position, size_type n, const value_type &val)
 		{
 			if (position == begin()) {
-				begin_ = realloc_(n);
-				endCap_ = begin_ + n;
-				end_ = begin_;
-				iterator tmp = begin();
-				for (size_type i = 0; end_ != endCap_ && i < n; ++tmp, ++i) {
-					*tmp = val;
+				begin_ = end_ = realloc_(n);
+				for (size_type i = 0; end_ != endCap_ && i < n; ++i) {
+					alloc_.construct(end_, val);
 					++end_;
 				}
 			} else {
@@ -430,7 +431,7 @@ class vector {
 					*position = val;
 				}
 			}
-			return iterator(begin_);
+			return begin();
 		}
 
 		template <class InputIter>
@@ -440,11 +441,9 @@ class vector {
 		{
 			difference_type	lenRange = std::distance(first, last);
 			if (position.base() == begin_) {
-				begin_ = realloc_(lenRange);
-				endCap_ = begin_ + lenRange;
-				end_ = begin_;
-				for (iterator tmp = begin(); end_ != endCap_ && first != last; ++tmp, ++first) {
-					*tmp = *first;
+				begin_ = end_ = realloc_(lenRange);
+				for (; end_ != endCap_ && first != last; ++first) {
+					alloc_.construct(end_, *first);
 					++end_;
 				}
 			}
